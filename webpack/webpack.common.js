@@ -29,7 +29,7 @@ const english = JSON.parse(fs.readFileSync(path.join(__dirname, "../public/_loca
 module.exports = env => {
     const documentScriptBuild = webpack({
         entry: {
-            document: path.join(__dirname, srcDir + 'document.ts')
+            document: path.join(__dirname, srcDir + 'injected/document.ts')
         },
         output: {
             path: path.join(__dirname, '../dist/js'),
