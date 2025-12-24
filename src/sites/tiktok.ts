@@ -61,14 +61,6 @@ export const TikTokSiteInfo: SiteInfo = {
             wait: true,
             parent: 0,
             manuallyAlignSubmissionBox: true,
-            getColor: (element, button) => {
-                const style = window.getComputedStyle(button.parentElement!);
-                if (style.color) {
-                    return style.color;
-                }
-
-                return null;
-            },
             postProcessor: (e, button) => {
                 button.style.zIndex = "1000";
             }

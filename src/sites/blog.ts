@@ -54,14 +54,6 @@ export const BlogSiteInfo: SiteInfo = {
             },
             position: PlacementPosition.After,
             manuallyAlignSubmissionBox: true,
-            getColor: (_, button) => {
-                const style = window.getComputedStyle(button.parentElement!);
-                if (style.color) {
-                    return style.color;
-                }
-
-                return null;
-            },
             postProcessor: (_, button) => {
                 button.style.verticalAlign = "baseline";
             }

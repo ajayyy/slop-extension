@@ -123,6 +123,11 @@ export class ReportButton {
                 if (color) {
                     this.button.style.fill = color;
                 }
+            } else if (this.button.parentElement) {
+                const style = window.getComputedStyle(this.button.parentElement!);
+                if (style.color) {
+                    this.button.style.fill = style.color;
+                }
             }
 
             if (this.buttonPlacement.postProcessor) {

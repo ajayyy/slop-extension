@@ -1,4 +1,4 @@
-import { SelectorPatternType, SiteInfo, SiteType } from "../utils/siteInfo.types";
+import { PlacementPosition, SelectorPatternType, SiteInfo, SiteType } from "../utils/siteInfo.types";
 
 export const YouTubeSiteInfo: SiteInfo = {
     domains: ["youtube.com", "youtube-nocookie.com"],
@@ -18,8 +18,13 @@ export const YouTubeSiteInfo: SiteInfo = {
                 return url;
             }
         }],
-        buttonPlacements: [],
-        elementCSSSelector: "yt_movie",
+        buttonPlacements: [{
+            selector: '#top-level-buttons-computed',
+            position: PlacementPosition.Before,
+            parent: 0,
+            manuallyAlignSubmissionBox: true,
+        }],
+        elementCSSSelector: "#above-the-fold",
     },
     browsePageFinder: {
         //todo: use maze utils
