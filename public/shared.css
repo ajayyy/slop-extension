@@ -1,0 +1,304 @@
+:root {
+    --sb-slider-color: #707070;
+}
+
+/*
+ * Generic utilities
+ */
+.cb-grey-text {
+    color: var(--sb-grey-fg-color);
+}
+
+.cb-white-text {
+    color: var(--sb-main-fg-color);
+}
+
+.sbHeader {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: left;
+    margin: 0;
+}
+
+#sponsorBlockPopupBody .u-mZ, .sbYourWorkBox .u-mZ {
+    margin: 0 !important;
+    position: relative;
+}
+
+#sponsorBlockPopupBody .hidden, .sbYourWorkBox .hidden {
+    display: none !important;
+}
+
+
+/*
+ * Your Work box
+ */
+.sbYourWorkBox {
+    margin: 16px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    border: 2px solid var(--sb-grey-bg-color);
+}
+
+.sbYourWorkBox a,
+.sbYourWorkBox button {
+    cursor: pointer;
+}
+
+.sbYourWorkCols {
+    display: flex;
+    border-top: 2px solid var(--sb-grey-bg-color);
+}
+
+.sbStatsSentence {
+    padding: 6px 14px;
+    border-top: 2px solid var(--sb-grey-bg-color);
+}
+
+/*
+ * Increase font size of username input and display
+ */
+#usernameValue,
+#usernameInput {
+    font-size: 16px;
+    flex: 1 0;
+}
+
+#sponsorTimesContributionsDisplay {
+    font-size: 16px;
+}
+
+/*
+ * <button> elements that have icons
+ */
+ #setUsernameButton,
+ #copyUserID,
+ #submitUsername {
+     color: var(--sb-main-fg-color);
+     background: transparent;
+     width: fit-content;
+     padding: 0;
+     border: none;
+ }
+
+/*
+  * Improve alignment of username and submissions
+  */
+#cbUsernameElement>p,
+#sponsorTimesContributionsContainer {
+    text-align: left;
+}
+
+/*
+  * Username
+  */
+#cbUsernameElement {
+    padding: 8px 14px;
+    min-width: 40%;
+    width: 100%;
+}
+
+#setUsernameContainer {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+}
+
+#setUsernameContainer>button {
+    display: flex;
+}
+
+#setUsernameButton {
+    margin-right: 5px;
+    flex: 0 1;
+}
+
+.cbPopupButton {
+    width: 16px;
+    fill: var(--sb-main-fg-color);
+}
+
+#submitUsername {
+    padding-left: 16px;
+}
+
+#copyUserID {
+    width: 100%;
+    flex: 0 1;
+}
+
+/*
+  * Truncate username display
+  */
+#usernameValue {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    margin: 0 8px 0 0;
+    max-width: 105px;
+}
+
+#usernameValue.usernameWider {
+    max-width: 262px;
+}
+
+/*
+  * Set username form container with "expanded" state
+  */
+#setUsername.SBExpanded {
+    text-align: left;
+}
+
+.SBExpanded {
+    display: flex;
+}
+
+/*
+  * Set username input
+  */
+#usernameInput {
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    width: calc(100% - 68px);
+    text-overflow: ellipsis;
+    color: var(--sb-main-fg-color);
+    background-color: var(--sb-grey-bg-color);
+}
+
+/*
+  * Submissions
+ */
+#sponsorTimesContributionsContainer {
+    padding: 8px 14px;
+    border-left: 2px solid var(--sb-grey-bg-color);
+}
+
+.sbYourWorkCols > *:first-child {
+    border-left: none !important;
+}
+
+/* Options */
+
+.sb-optionsSelector {
+    background-color: #0e79ca;
+    color: white;
+    
+    border: none;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.sb-optionLabel {
+    font-size: 16px;
+    padding-bottom: 5px;
+
+    display: block;
+}
+
+.sb-optionContainer {
+    padding-bottom: 2px;
+}
+
+.sb-switch-container {
+	content: attr(label-name);
+    width: max-content;
+
+    font-size: 14px;
+
+    display: table;
+}
+
+.sb-switch-container .sb-switch-label {
+    display: table-cell;
+    vertical-align: middle;
+
+    padding-left: 4px;
+}
+
+.sb-switch-label {
+    width: inherit;
+}
+
+.sb-switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 24px;
+    min-width: 40px;
+}
+
+.sb-switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.sb-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--sb-slider-color);
+}
+
+.sb-animated * {
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.sb-slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+}
+
+.sb-animated .sb-slider:before {
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked + .sb-slider {
+    background-color: #0e79ca;
+}
+
+input:checked + .sb-slider:before {
+    -webkit-transform: translateX(16px);
+    -ms-transform: translateX(16px);
+    transform: translateX(16px);
+}
+
+/* Rounded sliders */
+.sb-slider.sb-round {
+    border-radius: 34px;
+}
+
+.sb-slider.sb-round:before {
+    border-radius: 50%;
+}
+
+.sb-switch-container-container {
+    display: flex;
+    justify-content: center;
+}
+
+.license-key-button {
+    width: fit-content;
+    margin: auto;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.license-key-text {
+    font-size: 10px;
+
+    width: fit-content;
+    margin: auto;
+}

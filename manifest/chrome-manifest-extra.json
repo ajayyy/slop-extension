@@ -1,0 +1,114 @@
+{
+    "permissions": [
+        "scripting"
+    ],
+    "web_accessible_resources": [{
+        "resources": [
+            "icons/refresh.svg",
+            "icons/logo.svg",
+            "js/document.js",
+            "js/options.js",
+            "js/popup.js",
+            "popup.css",
+            "shared.css",
+            "help.html",
+            "help.css",
+            "content.css",
+            "icons/logo-16.png",
+            "icons/logo-32.png",
+            "icons/logo-64.png",
+            "icons/logo-128.png",
+            "icons/logo-256.png",
+            "icons/logo-2r.svg",
+            "icons/logo-casual.svg",
+            "icons/close.png",
+            "icons/add.svg",
+            "icons/remove.svg"
+        ],
+        "matches": ["<all_urls>"]
+    }],
+    "host_permissions": [
+        "<all_urls>"
+    ],
+    "content_scripts": [{
+        "world": "MAIN",
+        "js": [
+            "./js/document.js"
+        ],
+        "matches": [
+            "https://*.youtube.com/*",
+            "https://www.youtube-nocookie.com/embed/*"
+        ],
+        "exclude_matches": [
+            "https://accounts.youtube.com/RotateCookiesPage*"
+        ],
+        "all_frames": true,
+        "run_at": "document_start"
+    }, {
+        "world": "ISOLATED",
+        "js": [
+            "./js/content.js"
+        ],
+        "css": [
+            "content.css",
+            "shared.css"
+        ],
+        "matches": [
+            "http://*/*",
+            "https://*/*"
+        ],
+        "all_frames": true,
+        "run_at": "document_start"
+    }],
+    "action": {
+        "default_title": "DeArrow",
+        "default_popup": "popup.html",
+        "default_icon": {
+            "16": "icons/logo-16.png",
+            "32": "icons/logo-32.png",
+            "64": "icons/logo-64.png",
+            "128": "icons/logo-128.png"
+        },
+        "theme_icons": [
+            {
+                "light": "icons/logo-16.png",
+                "dark": "icons/logo-16.png",
+                "size": 16
+            },
+            {
+                "light": "icons/logo-32.png",
+                "dark": "icons/logo-32.png",
+                "size": 32
+            },
+            {
+                "light": "icons/logo-64.png",
+                "dark": "icons/logo-64.png",
+                "size": 64
+            },
+            {
+                "light": "icons/logo-128.png",
+                "dark": "icons/logo-128.png",
+                "size": 128
+            },
+            {
+                "light": "icons/logo-256.png",
+                "dark": "icons/logo-256.png",
+                "size": 256
+            },
+            {
+                "light": "icons/logo-512.png",
+                "dark": "icons/logo-512.png",
+                "size": 512
+            },
+            {
+                "light": "icons/logo-1024.png",
+                "dark": "icons/logo-1024.png",
+                "size": 1024
+            }
+        ]
+    },
+    "background": {
+        "service_worker": "./js/background.js"
+    },
+    "manifest_version": 3
+}

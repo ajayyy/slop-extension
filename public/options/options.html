@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<!-- Link to specific tabs by using their ID in the URL like: options.html#keybinds -->
+
+<head>
+  <title>__MSG_Options__ - Slop</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" /> 
+  <link rel="icon" href="../icons/logo.svg" type="image/png">
+  
+  <link href="options.css" rel="stylesheet"/>
+  <link href="../shared.css" rel="stylesheet"/>
+
+  <script src="../js/options.js"></script>
+</head>
+
+<body class="sponsorBlockPageBody">
+
+	<div id="options-container">
+
+		<div id="menubar" class="center">
+
+			<div id="title" class="titleBar">
+				<img src="../icons/logo.svg" class="profilepic" alt="DeArrow logo"/>
+				Slop Extension
+				<div class="logoSubtext">
+					<span id="version"></span>
+					<span class="licenseKeyButtonParent">
+						<span id="licenseKeyButton" class="hidden">__MSG_ViewLicenseKey__</span>
+					</span>
+				</div>
+				<div class="logoSubtextCentered hidden" id="licenseKey"></div>
+				<div class="logoSubtextCentered hidden" id="sharingLicense">(__MSG_SharingIsCaring__)</div>
+			</div>
+
+			<div id="navigation">
+				<div class="tab-heading" data-for="behavior">
+					__MSG_optionsTabBehavior__
+				</div>
+
+				<div class="tab-heading" data-for="interface">
+					__MSG_optionsTabInterface__
+				</div>
+
+				<div class="tab-heading" data-for="channel-allowlist">
+					__MSG_ChannelAllowlist__
+				</div>
+
+				<div class="tab-heading" data-for="keybinds">
+					__MSG_optionsTabKeyBinds__
+				</div>
+
+				<div class="tab-heading" data-for="import">
+					__MSG_optionsTabBackup__
+				</div>
+
+				<div class="tab-heading" data-for="advanced">
+					__MSG_optionsTabAdvanced__
+				</div>
+		</div>
+
+			<div id="createdBy" class="titleBar">
+				<div>
+					<img src="../icons/newprofilepic.jpg" height="30" class="profilepiccircle" alt="profile picture of creator"/>
+					__MSG_createdBy__ 
+					<a href="https://ajay.app">Ajay Ramachandran</a> 
+				</div>
+				<a href="https://sponsor.ajay.app/donate" target="_blank" rel="noopener" class="hidden" id="sbDonate">(__MSG_Donate__)</a>
+			</div>
+
+		</div>
+
+		<div id="options">
+
+			<div id="behavior" class="option-group hidden">
+
+				<div data-type="react-CasualChoiceComponent"></div>
+
+				<div data-type="toggle" data-sync="replaceTitles">
+					<div class="sb-switch-container">
+						<label class="sb-switch">
+							<input id="replaceTitles" type="checkbox" checked>
+							<span class="sb-slider sb-round"></span>
+						</label>
+						<label class="sb-switch-label" for="replaceTitles">
+							__MSG_replaceTitles__
+						</label>
+					</div>
+				</div>
+
+				<div data-type="toggle" data-sync="replaceThumbnails">
+					<div class="sb-switch-container">
+						<label class="sb-switch">
+							<input id="replaceThumbnails" type="checkbox" checked>
+							<span class="sb-slider sb-round"></span>
+						</label>
+						<label class="sb-switch-label" for="replaceThumbnails">
+							__MSG_replaceThumbnails__
+						</label>
+					</div>
+				</div>
+
+				<div data-type="toggle" data-sync="useCrowdsourcedTitles" data-dependent-on="replaceTitles">
+					<div class="sb-switch-container">
+						<label class="sb-switch">
+							<input id="useCrowdsourcedTitles" type="checkbox" checked>
+							<span class="sb-slider sb-round"></span>
+						</label>
+						<label class="sb-switch-label" for="useCrowdsourcedTitles">
+							__MSG_useCrowdsourcedTitles__
+						</label>
+					</div>
+
+					<div class="small-description">__MSG_whatUseCrowdsourcedTitles__</div>
+				</div>
+
+				<div data-type="toggle" data-toggle-type="reverse" data-sync="defaultToCustom">
+					<div class="sb-switch-container">
+						<label class="sb-switch">
+							<input id="defaultToCustom" type="checkbox" checked>
+							<span class="sb-slider sb-round"></span>
+						</label>
+						<label class="sb-switch-label" for="defaultToCustom">
+							__MSG_defaultToOriginals__
+						</label>
+					</div>
+
+					<div class="small-description">__MSG_whatDefaultToOriginals__</div>
+				</div>
+
+				<div data-type="selector" data-sync="titleFormatting">
+					<label class="optionLabel" for="titleFormatting">__MSG_titleFormatting__:</label>
+
+					<select id="titleFormatting" class="selector-element sb-optionsSelector" >
+						<option value="-1">__MSG_Disabled__</option>
+						<option value="1">__MSG_TitleCase__</option>
+						<option value="2">__MSG_SentenceCase__</option>
+						<option value="3">__MSG_LowerCase__</option>
+						<option value="4">__MSG_FirstLetterUppercase__</option>
+						<option value="0">__MSG_CapitalizeWords__</option>
+					</select>
+
+					<br/>
+					<br/>
+
+					<div data-type="toggle" data-sync="formatOriginalTitles">
+						<div class="sb-switch-container">
+							<label class="sb-switch">
+								<input id="formatOriginalTitles" type="checkbox" checked>
+								<span class="sb-slider sb-round"></span>
+							</label>
+							<label class="sb-switch-label" for="formatOriginalTitles">
+								__MSG_formatOriginalTitles__
+							</label>
+						</div>
+					</div>
+
+					<br/>
+
+					<div data-type="toggle" data-sync="formatCustomTitles">
+						<div class="sb-switch-container">
+							<label class="sb-switch">
+								<input id="formatCustomTitles" type="checkbox" checked>
+								<span class="sb-slider sb-round"></span>
+							</label>
+							<label class="sb-switch-label" for="formatCustomTitles">
+								__MSG_formatCustomTitles__
+							</label>
+						</div>
+					</div>
+
+					<br/>
+
+					<div data-type="toggle" data-sync="shouldCleanEmojis">
+						<div class="sb-switch-container">
+							<label class="sb-switch">
+								<input id="shouldCleanEmojis" type="checkbox" checked>
+								<span class="sb-slider sb-round"></span>
+							</label>
+							<label class="sb-switch-label" for="shouldCleanEmojis">
+								__MSG_shouldCleanEmojis__
+							</label>
+						</div>
+					</div>
+
+					<br/>
+	
+					<div data-type="toggle" data-sync="onlyTitleCaseInEnglish" data-dependent-on-selector="titleFormatting" data-dependent-on-selector-value="1">
+						<div class="sb-switch-container">
+							<label class="sb-switch">
+								<input id="onlyTitleCaseInEnglish" type="checkbox" checked>
+								<span class="sb-slider sb-round"></span>
+							</label>
+							<label class="sb-switch-label" for="onlyTitleCaseInEnglish">
+								__MSG_onlyTitleCaseInEnglish__
+							</label>
+						</div>
+	
+						<div class="small-description">__MSG_onlyTitleCaseInEnglishDescription__</div>
+					</div>
+				</div>
+
+				<div data-type="selector" data-sync="thumbnailFallback">
+					<label class="optionLabel" for="thumbnailFallback">__MSG_thumbnailFallbackOption__:</label>
+
+					<select id="thumbnailFallback" class="selector-element sb-optionsSelector" >
+						<option value="0">__MSG_RandomTime__</option>
+						<option value="2">__MSG_TheOriginalThumbnail__</option>
+						<option value="1">__MSG_showABlankBox__</option>
+						<option value="3">__MSG_AutoGenerated__</option>
+					</select>
+
+					<div class="small-description">__MSG_whatThumbnailFallbackOption__</div>
+
+					<div data-type="selector" class="extra-top-padding" data-sync="thumbnailFallbackAutogenerated" data-dependent-on-selector="thumbnailFallback" data-dependent-on-selector-value="3">
+						<select id="thumbnailFallbackAutogenerated" class="selector-element sb-optionsSelector" >
+							<option value="0">__MSG_Start__</option>
+							<option value="1">__MSG_Middle__</option>
+							<option value="2">__MSG_End__</option>
+						</select>
+					</div>
+
+					<div data-type="toggle" data-sync="showLiveCover" data-dependent-on-selector="thumbnailFallback" data-dependent-on-selector-value="0" data-dependent-on-selector-value-2="3">
+						<br/>
+						
+						<div class="sb-switch-container">
+							<label class="sb-switch">
+								<input id="showLiveCover" type="checkbox" checked>
+								<span class="sb-slider sb-round"></span>
+							</label>
+							<label class="sb-switch-label" for="showLiveCover">
+								__MSG_showLiveCover__
+							</label>
+						</div>
+					</div>
+				</div>
+
+				<div data-type="toggle" data-sync="ignoreAbThumbnails">
+					<div class="sb-switch-container">
+						<label class="sb-switch">
+							<input id="ignoreAbThumbnails" type="checkbox" checked>
+							<span class="sb-slider sb-round"></span>
+						</label>
+						<label class="sb-switch-label" for="ignoreAbThumbnails">
+							__MSG_ignoreAbThumbnails__
+						</label>
+					</div>
+
+					<div class="small-description">__MSG_ignoreAbThumbnailsDescription__</div>
+				</div>
+
+				<div data-type="toggle" data-sync="hideDetailsWhileFetching">
+					<div class="sb-switch-container">
+						<label class="sb-switch">
+							<input id="hideDetailsWhileFetching" type="checkbox" checked>
+							<span class="sb-slider sb-round"></span>
+						</label>
+						<label class="sb-switch-label" for="hideDetailsWhileFetching">
+							__MSG_hideDetailsWhileFetching__
+						</label>
+					</div>
+
+					<div class="small-description">__MSG_hideDetailsWhileFetchingDescription__</div>
+				</div>
+
+				<div data-type="toggle" data-sync="ignoreTranslatedTitles">
+					<div class="sb-switch-container">
+						<label class="sb-switch">
+							<input id="ignoreTranslatedTitles" type="checkbox" checked>
+							<span class="sb-slider sb-round"></span>
+						</label>
+						<label class="sb-switch-label" for="ignoreTranslatedTitles">
+							__MSG_ignoreTranslatedTitles__
+						</label>
+					</div>
+
+					<div class="small-description">__MSG_ignoreTranslatedTitlesDescription__</div>
+				</div>
+
+				<div data-type="number-change" data-sync="titleMaxLines">
+					<label class="number-container">
+						<span class="optionLabel">__MSG_titleMaxLines__</span>
+						<input type="number" step="1" min="1" style="width: 50px;">
+					</label>
+	
+					<div class="small-description">__MSG_titleMaxLinesDescription__</div>
+				</div>
+
+                <div data-type="number-change" data-sync="thumbnailSaturationLevel">
+                    <label class="number-container">
+                        <span class="optionLabel">__MSG_thumbnailSaturationLevel__</span>
+                        <input type="number" step="25" min="0" max="100" style="width: 50px;">
+                    </label>
+
+                    <div class="small-description">__MSG_whatSaturateThumbnails__</div>
+                </div>
+
+				<div data-type="toggle" data-sync="keepUnsubmitted">
+					<div class="sb-switch-container">
+						<label class="sb-switch">
+							<input id="keepUnsubmitted" type="checkbox" checked>
+							<span class="sb-slider sb-round"></span>
+						</label>
+						<label class="sb-switch-label" for="keepUnsubmitted">
+							__MSG_keepUnsubmitted__
+						</label>
+					</div>
+	
+					<div class="small-description">__MSG_whatKeepUnsubmitted__</div>
+				</div>
+
+				<div data-type="toggle" data-sync="keepUnsubmittedInPrivate" data-dependent-on="keepUnsubmitted" data-private-only="true">
+					<div class="sb-switch-container">
+						<label class="sb-switch">
+							<input id="keepUnsubmittedInPrivate" type="checkbox" checked>
+							<span class="sb-slider sb-round"></span>
+						</label>
+						<label class="sb-switch-label" for="keepUnsubmittedInPrivate">
+							__MSG_keepUnsubmittedInPrivate__
+						</label>
+					</div>
+				</div>
+
+			</div>
+
+			<div id="interface" class="option-group hidden">
+
+				<div data-type="toggle" data-sync="alwaysShowShowOriginalButton">
+					<div class="sb-switch-container">
+						<label class="sb-switch">
+							<input id="alwaysShowShowOriginalButton" type="checkbox" checked>
+							<span class="sb-slider sb-round"></span>
+						</label>
+						<label class="sb-switch-label" for="alwaysShowShowOriginalButton">
+							__MSG_alwaysShowShowOriginalButton__
+						</label>
+					</div>
+
+					<div class="small-description">__MSG_whatAlwaysShowShowOriginalButton__</div>
+				</div>
+
+				<div data-type="toggle" data-sync="showOriginalOnHover">
+					<div class="sb-switch-container">
+						<label class="sb-switch">
+							<input id="showOriginalOnHover" type="checkbox" checked>
+							<span class="sb-slider sb-round"></span>
+						</label>
+						<label class="sb-switch-label" for="showOriginalOnHover">
+							__MSG_showOriginalOnHover__
+						</label>
+					</div>
+					
+					<div data-type="toggle" data-sync="showOriginalOnHoverOfVideo" data-dependent-on="showOriginalOnHover">
+						<br/>
+
+						<div class="sb-switch-container">
+							<label class="sb-switch">
+								<input id="showOriginalOnHoverOfVideo" type="checkbox" checked>
+								<span class="sb-slider sb-round"></span>
+							</label>
+							<label class="sb-switch-label" for="showOriginalOnHoverOfVideo">
+								__MSG_showOriginalOnHoverOfVideo__
+							</label>
+						</div>
+
+						<div class="small-description">__MSG_showOriginalOnHoverOfVideoDescription__</div>
+					</div>
+				</div>
+
+				<div data-type="toggle" data-sync="showIconForFormattedTitles">
+					<div class="sb-switch-container">
+						<label class="sb-switch">
+							<input id="showIconForFormattedTitles" type="checkbox" checked>
+							<span class="sb-slider sb-round"></span>
+						</label>
+						<label class="sb-switch-label" for="showIconForFormattedTitles">
+							__MSG_showIconForFormattedTitles__
+						</label>
+					</div>
+				</div>
+
+				<div data-type="toggle" data-sync="showGuidelineHelp">
+					<div class="sb-switch-container">
+						<label class="sb-switch">
+							<input id="showGuidelineHelp" type="checkbox" checked>
+							<span class="sb-slider sb-round"></span>
+						</label>
+						<label class="sb-switch-label" for="showGuidelineHelp">
+							__MSG_showGuidelineHelp__
+						</label>
+					</div>
+				</div>
+
+				<div data-type="toggle" data-sync="darkMode">
+					<div class="sb-switch-container">
+						<label class="sb-switch">
+							<input id="darkMode" type="checkbox" checked>
+							<span class="sb-slider sb-round"></span>
+						</label>
+						<label class="sb-switch-label" for="darkMode">
+							__MSG_darkModeOptionsPage__
+						</label>
+					</div>
+				</div>
+
+				<div data-type="toggle" data-toggle-type="reverse" data-sync="showDonationLink" data-only-paid="true" data-no-safari="true">
+					<div class="sb-switch-container">
+						<label class="sb-switch">
+							<input id="showDonationLink" type="checkbox" checked>
+							<span class="sb-slider sb-round"></span>
+						</label>
+						<label class="sb-switch-label" for="showDonationLink">
+							__MSG_hideDonationLink__
+						</label>
+					</div>
+				</div>
+
+			</div>
+
+			<div id="channel-allowlist" class="option-group hidden">
+
+				<div data-type="react-ChannelOverridesComponent"></div>
+
+			</div>
+
+			<div id="keybinds" class="option-group hidden">
+
+				<div data-type="keybind-change" data-sync="enableExtensionKey">	
+					<label class="optionLabel">__MSG_enableDeArrowKey__:</label>
+					<div class="inline"></div>
+				</div>
+
+				<div data-type="keybind-change" data-sync="openMenuKey">	
+					<label class="optionLabel">__MSG_openDeArrowMenu__:</label>
+					<div class="inline"></div>
+				</div>
+
+			</div>
+
+			<div id="import" class="option-group hidden">
+
+				<div data-type="private-text-change" data-sync="userID" data-confirm-message="userIDChangeWarning">
+					<div class="option-button trigger-button">
+						__MSG_changeUserID__
+					</div>
+	
+					<div class="small-description">__MSG_whatChangeUserID__</div>
+	
+					<div class="option-hidden-section hidden spacing indent">
+						<input class="option-text-box" type="text">
+	
+						<div class="option-button text-change-set inline low-profile">
+							__MSG_setUserID__
+						</div>
+					</div>
+				</div>
+
+				<div data-type="private-text-change" data-sync="*" data-confirm-message="exportOptionsWarning">
+					<h2>__MSG_exportOptions__</h2>
+					
+					<div>
+						<div class="option-button trigger-button inline">
+							__MSG_exportOptionsCopy__
+						</div>
+						<div class="option-button download-button inline">
+							__MSG_exportOptionsDownload__
+						</div>
+						<label for="importOptions" class="option-button inline">
+							__MSG_exportOptionsUpload__
+						</label>
+						<input id="importOptions" type="file" class="upload-button hidden" />
+					</div>
+	
+					<div class="small-description">__MSG_whatExportOptions__</div>
+	
+					<div class="option-hidden-section hidden spacing indent">	
+						<textarea class="option-text-box" rows="10" style="width:80%"></textarea>
+	
+						<div class="option-button text-change-set">
+							__MSG_setOptions__
+						</div>
+					</div>
+				</div>
+
+				<div data-type="private-text-change" data-sync-type="local" data-sync="*" data-confirm-message="exportOptionsWarning">
+					<h2>__MSG_exportOtherData__</h2>
+					
+					<div>
+						<div class="option-button trigger-button inline">
+							__MSG_exportOptionsCopy__
+						</div>
+						<div class="option-button download-button inline">
+							__MSG_exportOptionsDownload__
+						</div>
+						<label for="importLocalOptions" class="option-button inline">
+							__MSG_exportOptionsUpload__
+						</label>
+						<input id="importLocalOptions" type="file" class="upload-button hidden" />
+					</div>
+	
+					<div class="option-hidden-section hidden spacing indent">	
+						<textarea class="option-text-box" rows="10" style="width:80%"></textarea>
+	
+						<div class="option-button text-change-set">
+							__MSG_setOptions__
+						</div>
+					</div>
+				</div>
+
+				<div data-type="button-press" data-sync="resetToDefault" data-confirm-message="confirmResetToDefault">
+					<div class="option-button trigger-button">
+						__MSG_resetToDefault__
+					</div>
+				</div>
+
+			</div>
+
+			<div id="advanced" class="option-group hidden">
+
+				<div data-type="selector" data-sync="thumbnailCacheUse">
+					<label class="optionLabel" for="thumbnailCacheUse">__MSG_useThumbnailGenerationService__:</label>
+
+					<select id="thumbnailCacheUse" class="selector-element sb-optionsSelector" >
+						<option value="2">__MSG_onAllPages__</option>
+						<option value="1">__MSG_onAllPagesExceptVideo__</option>
+						<option value="0">__MSG_Never__</option>
+					</select>
+
+					<div class="small-description">__MSG_thumbnailGeneratorDescription1__</div>
+
+					<div class="small-description">__MSG_thumbnailGeneratorDescription2__</div>
+
+					<div class="small-description">__MSG_thumbnailGeneratorDescription3__</div>
+
+					<div class="small-description">
+						<a href="https://github.com/ajayyy/DeArrowThumbnailCache" target="_blank" rel="noopener">__MSG_thumbnailGeneratorSourceCode__</a>
+					</div>
+
+					<div class="small-description">
+						<a href="https://github.com/ajayyy/SponsorBlock/wiki/K-Anonymity" target="_blank" rel="noopener">__MSG_moreAboutKAnonymity__</a>
+					</div>
+				</div>
+
+				<div data-type="toggle" data-sync="countReplacements">
+					<div class="sb-switch-container">
+						<label class="sb-switch">
+							<input id="countReplacements" type="checkbox" checked>
+							<span class="sb-slider sb-round"></span>
+						</label>
+						<label class="sb-switch-label" for="countReplacements">
+							__MSG_countReplacements__
+						</label>
+					</div>
+	
+					<div class="small-description">__MSG_countReplacementsDescription__</div>
+				</div>
+
+				<div data-type="button-press" data-sync="copyDebugInformation" data-confirm-message="copyDebugInformation">
+					<div class="option-button trigger-button">
+						__MSG_copyDebugInformation__
+					</div>
+	
+					<div class="small-description">__MSG_copyDebugInformationOptions__</div>
+				</div>
+
+				<div data-type="text-change" data-sync="serverAddress" data-dependent-on="testingServer" data-dependent-on-inverted="true">
+					<label class="optionLabel inline">
+						<span class="optionLabel">__MSG_dataFetchingServerAddress__:</span>
+	
+						<input class="option-text-box" type="text" style="margin-right:10px">
+					</label>
+
+					<div class="small-description">__MSG_dataFetchingServerAddressDescription__</div>
+	
+					<div class="next-line">
+						<div class="option-button text-change-set inline">
+							__MSG_save__
+						</div>
+		
+						<div class="option-button text-change-reset inline">
+							__MSG_reset__
+						</div>
+					</div>
+				</div>
+
+				<div data-type="text-change" data-sync="thumbnailServerAddress" data-dependent-on="testingServer" data-dependent-on-inverted="true">
+					<label class="optionLabel inline">
+						<span class="optionLabel">__MSG_thumbnailCacheServerAddress__:</span>
+	
+						<input class="option-text-box" type="text" style="margin-right:10px">
+					</label>
+
+					<div class="next-line">
+						<div class="option-button text-change-set inline">
+							__MSG_save__
+						</div>
+		
+						<div class="option-button text-change-reset inline">
+							__MSG_reset__
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+</body>

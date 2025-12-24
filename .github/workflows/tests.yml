@@ -1,0 +1,42 @@
+name: Tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+
+    steps:
+      # Initialization
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - run: npm ci
+
+      - uses: browser-actions/setup-chrome@c785b87e244131f27c9f19c1a33e2ead956ab7ce
+        with:
+          chrome-version: 135
+          install-dependencies: true
+          install-chromedriver: true
+      
+      - name: Copy configuration
+        run: "cp config.json.example config.json; sed -i 's/^}/,\"freeAccess\": true}/' config.json"
+
+      - name: Set up WireGuard Connection
+        uses: niklaskeerl/easy-wireguard-action@50341d5f4b8245ff3a90e278aca67b2d283c78d0
+        with:
+          WG_CONFIG_FILE: ${{ secrets.WG_CONFIG_FILE }}
+        
+      - name: Run tests
+        run: npm run test
+
+      - name: Upload results on fail
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: Test Results
+          path: ./test-results

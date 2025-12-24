@@ -1,0 +1,908 @@
+:root {
+    --cb-selected-thumbnail-border: 0.15em;
+    --cb-thumbnail-padding: 0.3em;
+    --skip-notice-margin: 5px;
+
+    --cb-forground-button-color: #0e79cac2;
+    --cb-foreground-button-disabled-color: #0e78ca63;
+}
+
+.cbCustomThumbnailCanvas.ytd-img-shadow:not(.ytp-autonav-endscreen-upnext-thumbnail, .ytp-videowall-still-image) {
+    display: block;
+    margin-left: var(--yt-img-margin-left, auto);
+    margin-right: var(--yt-img-margin-right, auto);
+    max-height: var(--yt-img-max-height, none);
+    max-width: var(--yt-img-max-width, 100%);
+    border-radius: var(--yt-img-border-radius, none);
+}
+
+.cbCustomThumbnailCanvas {
+    object-fit: cover;
+}
+
+.shortsLockupViewModelHostThumbnailContainer .cbCustomThumbnailCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+/* Livestream avatar cover images */
+.cbCustomThumbnailCanvas.cbLiveCover {
+    display: flex !important;
+}
+.cbCustomThumbnailCanvas.cbLiveCover::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    filter: blur(50px);
+    margin: -50px;
+
+    background-color: black;
+    background-image: var(--cbThumbBackground);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+/* Livestream cover inner image */
+.cbLiveCover img {
+    height: 50%;
+
+    object-fit: cover;
+
+    position: relative;
+    border-radius: 100%;
+    top: 0;
+    left: 0;
+    margin: auto;
+}
+
+/* Used to fix tooltips having the wrong offset since image is still displayed when YouTube calculates it's offset */
+/* Since tooltips have multiple uses, it becomes the play button tooltip */
+.ytp-tooltip:not(.ytp-text-detail) .cbCustomThumbnailCanvas {
+    display: none;
+}
+
+.cbThumbnail {
+    position: relative;
+    flex: 0 0 20%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    transition: width 0.3s ease-in-out, font-size 0.3s ease-in-out;
+
+    margin-left: 1%;
+    margin-right: 1%;
+
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+    padding: var(--cb-thumbnail-padding);
+    border-width: var(--cb-selected-thumbnail-border) !important;
+    border-color: transparent;
+    border-style: solid;
+}
+
+.cbThumbnail.cbThumbnailSelected {
+    border-color: var(--yt-spec-text-primary);
+}
+
+.cbBrandingPreview .cbThumbnail {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.cbThumbnail .cbVoteButtons {
+    display: flex;
+    justify-content: center;
+
+    margin-top: 4px;
+}
+
+.cbThumbnail .cbVoteButtons .cbButton {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+/* For miniplayer */
+.ytd-miniplayer .cbCustomTitle {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+/* Playlist titles should not be hidden */
+ytd-compact-playlist-renderer .ytd-compact-playlist-renderer #video-title:not(.cbCustomTitle) {
+    display: inherit !important;
+}
+
+/* For end recommendations */
+.cbCustomThumbnailCanvas.ytp-videowall-still-image {
+    z-index: -1;
+}
+
+/* For autoplay */
+.ytp-autonav-endscreen-upnext-thumbnail .cbCustomThumbnailCanvas,
+.ytp-ce-element .cbCustomThumbnailCanvas {
+    width: 100% !important;
+    border: none;
+    background-color: black;
+}
+
+.cbAddThumbnailOverlay {
+    position: absolute;
+    top: var(--cb-thumbnail-padding);
+    left: var(--cb-thumbnail-padding);
+    right: var(--cb-thumbnail-padding);
+    aspect-ratio: 16 / 9;
+
+    background-color: rgba(0, 0, 0, 0.5);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.cbThumbnailDrawer {
+    display: flex;
+    overflow-x: auto;
+
+    margin-top: 16px;
+    margin-bottom: 10px;
+}
+
+.cbThumbnailDrawer > div:first-child {
+    margin-left: auto;
+}
+
+.cbThumbnailDrawer > div:last-child {
+    margin-right: auto;
+}
+
+.submissionMenuInner > div {
+    scrollbar-width: thin;
+    scrollbar-color: #3b3b3b #00000000;
+}
+
+.submissionMenuInner > div::-webkit-scrollbar {
+    height: 6px;
+	background-color: #00000000;
+}
+
+.submissionMenuInner > div::-webkit-scrollbar-thumb
+{
+	background-color: #3b3b3b;
+    border-radius: 20px;
+}
+
+.submissionMenuInner .sbYourWorkBox {
+    --sb-main-fg-color: var(--yt-spec-text-primary);
+    --sb-grey-fg-color: var(--yt-spec-text-primary);
+    --sb-grey-bg-color: #64646470;
+}
+
+.slopVoteMenuInner {
+    padding: 10px;
+
+    --cb-forground-button-color: #bf5c34ff;
+    --cb-foreground-button-disabled-color: rgb(65, 32, 19);
+}
+
+.cbThumbnailImg {
+    width: 100%;
+
+    cursor: pointer;
+}
+
+.cbBrandingPreview .cbThumbnailImg {
+    cursor: default;
+}
+
+.cbTitle {
+    font-size: 1.3em;
+    display: flex;
+    align-items: center;
+
+    padding: var(--cb-thumbnail-padding);
+    box-sizing: border-box;
+    border-width: var(--cb-selected-thumbnail-border) !important;
+    border-style: solid;
+    border-color: transparent;
+}
+
+.cbTitle > span:focus {
+    outline: none;
+}
+
+.cbTitleSelected {
+    border-color: var(--yt-spec-text-primary);
+}
+
+.cbTitleTextHint {
+    opacity: 0.5;
+}
+
+.cbTitlePreview {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+
+    padding: 0;
+    margin-top: 0;
+    font-size: 2rem;
+
+    border: none;
+    width: 100%;
+    line-height: normal;
+}
+
+.cbTitlePreview:not(.cbSubmissionChecklist .cbTitlePreview) {
+    transform: rotate(180deg);
+}
+
+.cbTitlePreviewBox {
+    border: rgb(152, 152, 152) 1.2px solid;
+    border-radius: 5px;
+    font-family: "YouTube Sans", "Roboto", sans-serif;
+    font-weight: 600;
+
+    margin-top: 0;
+    margin: var(--cb-thumbnail-padding);
+
+    transform: rotate(180deg);
+}
+
+.cbTitlePreviewTypeName {
+    color: var(--yt-spec-text-primary);
+
+    padding-left: 0.26em;
+    padding-right: 0.26em;
+    margin-left: 10px;
+    margin-right: auto;
+
+    transform: rotate(180deg);
+}
+
+.cbBrandingPreview .cbTitle {
+    cursor: text !important;
+
+    padding-top: 3px;
+}
+
+.cbHiddenTextBox {
+    display: none;
+}
+
+.slSubmitMenu {
+    position: absolute;
+    margin-top: 3em;
+	background-color: rgba(28, 28, 28, 0.9);
+    backdrop-filter: blur(10px);
+
+    width: 300px;
+    margin-left: auto;
+    right: 0;
+
+    z-index: 10000;
+    font-size: 12px;
+    color: white;
+    fill: white;
+
+    border-radius: 5px;
+    line-height: normal;
+    cursor: default;
+}
+
+.submissionMenuInner {
+    padding: 15px;
+}
+
+.cbButton {
+    background: transparent !important;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    vertical-align: top;
+
+    margin-left: 10px;
+    margin-right: 10px;
+
+    cursor: pointer;
+}
+
+.cbButton path {
+    transition: fill 0.5s;
+}
+
+.cbButton img {
+    height: 60%;
+	top: 0;
+	bottom: 0;
+	display: block;
+	margin: auto;
+}
+
+.resetCustomTitle {
+    display: inline;
+    margin: 5px;
+
+    height: 1em;
+    margin: 0;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+.cbTitle {
+    position: relative;
+}
+
+.cbTitle:not(.cbTitleSelected, .cbTitlePreview) {
+    cursor: pointer !important;
+}
+
+.cbTitleSelected .resetCustomTitle {
+    height: 1.3em;
+}
+
+.cbTitleSelected svg.resetCustomTitle {
+    height: 0.7em;
+}
+
+.cbTitle .cbVoteButtons {
+    width: max-content;
+    margin-left: auto;
+    display: flex;
+}
+
+.cbTitle .cbVoteButtons .cbButton {
+    margin-left: 5px;
+    margin-right: 5px;
+
+    height: 16px;
+}
+
+.cbVipToggles {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.cbNoticeButton:disabled {
+    cursor: default;
+    background-color: var(--cb-foreground-button-disabled-color) !important;
+}
+
+.cbNoticeButton {
+	background: none;
+	font-size: 1.3em;
+    padding: 10px 20px;
+    border-radius: 30px;
+    background-color: var(--cb-forground-button-color);
+    color: white;
+    border: none;
+    text-decoration: none;
+
+    cursor: pointer;
+	transition: background-color 0.2s;
+}
+
+.cbNoticeButton:hover {
+    background-color: #0e78ca;
+}
+
+.cbNotice {
+    text-align: center;
+    margin-bottom: 5px;
+	font-size: 1.3em;
+}
+
+.cbVoteButtonContainer, .cbHelpButtonContainer {
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.cbVoteButton {
+    font-size: 2em;
+}
+
+.cbVoteButton.cbCancelButton {
+    font-size: 1em;
+}
+
+.cbHelpContainer {
+    margin: auto;
+    width: 80%;
+
+    padding-top: 6px;
+}
+
+.cbTip {
+    display: flex;
+    align-items: center;
+
+    padding-top: 7px;
+    padding-bottom: 7px;
+}
+
+.cbTipIcon {
+    width: 30px;
+    flex-shrink: 0;
+}
+
+.cbTipText {
+    font-size: 14px;
+    padding-left: 5px;
+
+    text-align: center;
+    width: 100%;
+}
+
+.cbSubmitInstructions {
+    margin-top: 4px;
+    margin-bottom: 4px;
+
+    font-size: 2em;
+}
+
+.cbLine {
+    border: 0;
+    border-top: 1px solid var(--yt-spec-text-primary);
+
+    width: 80%;
+    margin: auto;
+}
+
+.cbChecklistNotce {
+    animation: fadeIn 0.2s ease-out;
+}
+
+.slChecklistBox {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+
+    transition: opacity 1s;
+}
+
+.slAllHuman {
+    display: flex;
+    justify-content: space-around;
+}
+
+/* Based on https://codepen.io/avstorm/pen/LYEobqZ */
+.slChecklistBox input[type="checkbox"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+    margin: 0;
+}
+.slChecklistBox input[type="checkbox"]:focus {
+    outline: 0;
+}
+.slChecklistBox input {
+    top: 0;
+    left: 0;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #bfbfc0;
+    border-radius: 50%;
+    transition: all 0.2s ease, visibility 0s;
+}
+.slChecklistBox.cbSquare input {
+    border-radius: 3px;
+}
+.slChecklistBox.cbNoAnim input:checked {
+    background: var(--cb-forground-button-color);
+}
+.slChecklistBox:hover input {
+    border-color: #b0b0b1;
+}
+.slChecklistBox label {
+    width: 16px;
+    height: 16px;
+    background: none;
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    filter: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" version="1.1"><defs><filter id="goo"><feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/><feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -7" result="goo"/><feBlend in="SourceGraphic" in2="goo"/></filter></defs></svg>#goo');
+
+    transform: trasnlate3d(0, 0, 0);
+    pointer-events: none;
+}
+.slChecklistBox svg {
+    position: absolute;
+    top: 3.33px;
+    left: 3px;
+    z-index: 1;
+    pointer-events: none;
+}
+.slChecklistBox svg path {
+    stroke: #fff;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 19;
+    stroke-dashoffset: 19;
+    transition: all 0.4s ease, visibility 0s;
+}
+.slChecklistBox:not(.cbNoAnim) input:checked + label {
+    animation: splash 0.6s ease forwards;
+}
+.slChecklistBox input:checked + label + svg path {
+    stroke-dashoffset: 0;
+}
+.slChecklistBox.slDisabled {
+    opacity: 0.3;
+}
+.slChecklistBox.slDisabled input[type="checkbox"] {
+    cursor: default;
+}
+.slChecklistCheckboxParent {
+    position: relative;
+
+    height: 16px;
+}
+@keyframes splash {
+    0% {
+        transform: scale(1.1);
+    }
+    40% {
+        transform: scale(1);
+        background: var(--cb-forground-button-color);
+        box-shadow: 0 -18px 0 -8px var(--cb-forground-button-color), 16px -8px 0 -8px var(--cb-forground-button-color), 16px 8px 0 -8px var(--cb-forground-button-color), 0 18px 0 -8px var(--cb-forground-button-color), -16px 8px 0 -8px var(--cb-forground-button-color), -16px -8px 0 -8px var(--cb-forground-button-color);
+    }
+    100% {
+        background: var(--cb-forground-button-color);
+        box-shadow: 0 -32px 0 -10px transparent, 28px -16px 0 -10px transparent, 28px 16px 0 -10px transparent, 0 32px 0 -10px transparent, -28px 16px 0 -10px transparent, -28px -16px 0 -10px transparent;
+    }
+}
+
+.cbCheckboxHide {
+    opacity: 0;
+}
+
+.slChecklistTextBox {
+    padding-left: 5px;
+}
+
+.slChecklistBoxTitle {
+    font-size: 14px;
+}
+
+.slChecklistBoxSubtitle {
+    font-size: 11px;
+    padding-top: 5px;
+}
+
+.cbCheckAllMessage {
+    text-align: center;
+}
+
+.cbSubmissionChecklist .cbVoteButtonContainer {
+    margin-bottom: 5px;
+}
+
+@keyframes fadeIn {
+	from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.cbShowOriginal {
+    display: none;
+    opacity: 1;
+    transition: opacity 0.2s;
+    margin-right: 0;
+    margin-left: 5px;
+    z-index: 1;
+}
+
+/* Endcards need a little margin instead of 0 */
+.ytp-ce-covering-overlay .cbShowOriginal {
+    margin-right: 10px;
+}
+
+.cbShowOriginal img {
+    transition: filter 0.3s;
+}
+
+.cbShowOriginal img.cbOriginalShown {
+    filter: grayscale(1);
+}
+
+.cbShowOriginal img.cbAutoFormat:not(.cbOriginalShown), .cbShowOriginal img.cbCasualTitle:not(.cbOriginalShown) {
+    filter: saturate(0.5);
+}
+
+.cbShowOriginal:hover {
+    opacity: 0.7;
+}
+
+.cbMobileButton.cbShowOriginal {
+    margin-left: 0;
+}
+
+/* General case, endcards */
+*:hover > *:not(.ytp-ce-element, .ytp-autonav-suggestion-card) > * > .cbShowOriginal:not(.cbMobile),
+        .ytp-ce-element:hover > * > .cbShowOriginal:not(.cbMobile),
+        .ytp-autonav-suggestion-card:hover > * > .cbShowOriginal:not(.cbMobile),
+        .cbShowOriginal.cbDontHide, .cbShowOriginal.cbMobileDontHide {
+    display: inline !important;
+}
+
+.cbMobileButton.cbTitleButton {
+    margin-right: 0;
+}
+
+.cbTitleButton svg {
+    fill: var(--yt-spec-text-primary);
+    display: block;
+}
+
+.cbShowOriginal img.cbShowOriginalImage, .cbTitleButton svg {
+    /* Max height also set in js  */
+    height: 20px;
+}
+
+.cbCasualVoteButton {
+    margin-right: 0;
+}
+
+.slopVoteTitle {
+    font-size: 22px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.slopVoteTitleLogo {
+    height: 25px;
+    padding: 5px;
+}
+
+.slopBoxContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.cbCasualVoteDescription {
+    font-size: 14px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.cbCasualVoteDescription > div {
+    padding: 5px;
+}
+
+.cbCasualVoteDescription a {
+    color: inherit;
+}
+
+.casualOnboarding .cbVoteButton {
+    font-size: 18px;
+}
+
+.casualVoteMenuInner .cbNoticeButton:hover {
+    background-color: #22893e;
+}
+
+.casualOnboarding .cbCasualVoteTitle {
+    padding-top: 10px;
+}
+
+/* For autoplay */
+.ytp-autonav-endscreen-video-info .cbShowOriginal img.cbShowOriginalImage {
+    height: 18px;
+}
+
+/* For Watch Page */
+.cbTitleButtonContainer {
+    display: flex;
+    align-content: center;
+}
+
+/* For notifications */
+ytd-comment-video-thumbnail-header-renderer .cbShowOriginal {
+    margin-left: 0;
+    margin-right: 16px;
+}
+
+/* For playlist titles to be properly spaced out with show original button */
+ytd-playlist-panel-video-renderer #video-title {
+    width: 100%;
+}
+
+/* Fix mixes in recomendations breaking flex layout */
+ytd-compact-radio-renderer ytd-badge-supported-renderer, ytd-grid-movie-renderer ytd-badge-supported-renderer {
+    position: absolute;
+    right: 0;
+}
+
+/* Fixes channel trailer titles */
+ytd-channel-video-player-renderer #title > a {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Tooltip */
+
+.sponsorBlockTooltip {
+    position: absolute;
+    background-color: rgba(28, 28, 28, 0.7);
+    border-radius: 5px;
+    padding: 10px;
+    max-width: 300px;
+	width: max-content;
+    white-space: normal;
+    line-height: 1.5em;
+	color: white;
+	font-size: 12px;
+	z-index: 10000;
+}
+
+.sponsorBlockTooltip.cbOnboarding {
+    max-width: 315px;
+}
+
+.sponsorBlockTooltip a {
+	color: white;
+}
+
+.sponsorBlockTooltip.sbTriangle::after {
+    content: " ";
+    position: absolute;
+    top: 100%;
+    left: 15%;
+    margin-left: -15px;
+    border-width: 15px;
+    border-style: solid;
+    border-color: rgba(28, 28, 28, 0.7) transparent transparent transparent;
+}
+
+.sponsorBlockTooltip.sbTriangle.sbSolid::after {
+    border-color: rgba(28, 28, 28, 1) transparent transparent transparent;
+}
+
+.sponsorBlockTooltip.sbTriangle.sbSolid.rightSBTriangle::after {
+    border-color: transparent transparent transparent rgba(28, 28, 28, 1);
+}
+
+.sponsorBlockTooltip.sbTriangle.centeredSBTriangle::after {
+	left: 50%;
+	right: 50%;
+}
+
+.sponsorBlockTooltip.sbTriangle.rightSBTriangle::after {
+	left: 100%;
+	top: 50%;
+    margin-top: -15px;
+    margin-left: 0;
+}
+
+.sponsorSkipObject {
+	font-family: Roboto, Arial, Helvetica, sans-serif;
+
+	margin-left: var(--skip-notice-margin);
+	margin-right: var(--skip-notice-margin);
+}
+
+.sponsorSkipObjectFirst {
+	margin-left: 0;
+}
+
+.sponsorSkipLogo {
+	height: 18px;
+
+	float: left;
+}
+
+.sponsorSkipNoticeButton {
+	background: none;
+	color: rgb(235, 235, 235);
+	border: none;
+	display: inline-block;
+	font-size: 13.3333px !important;
+
+	cursor: pointer;
+
+	margin-right: 10px;
+
+    padding: 2px 5px;
+}
+
+.sponsorSkipNoticeButton:hover {
+	background-color: rgba(235, 235, 235,0.2);
+	border-radius: 4px;
+
+	transition: background-color 0.4s;
+}
+
+.sponsorSkipNoticeRightButton {
+	margin-right: 0;
+}
+
+#dearrowReplacementsDone {
+    text-align: center;
+}
+
+.sb-switch-container-container {
+    display: flex;
+    justify-content: left !important;
+}
+
+.thumbnailNoBackground::before {
+    background-color: transparent !important;
+}
+
+.yt-lockup-metadata-view-model__title.cbTitle24 {
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: space-between !important;
+    max-height: var(--cb-max-height) !important;
+}
+
+/* These now have a "mix" image in the background, so need a background */
+ytd-playlist-video-thumbnail-renderer,
+ytd-playlist-video-renderer a#thumbnail,
+ytd-playlist-video-renderer .yt-thumbnail-view-model__image
+ytd-compact-radio-renderer a#thumbnail,
+ytd-compact-radio-renderer .yt-thumbnail-view-model__image {
+    background-color: black;
+}
+ytd-playlist-video-thumbnail-renderer {
+    border-radius: var(--yt-img-border-radius, none);
+}
+
+/* Making the duration of videos on mobile YouTube appear */
+.video-thumbnail-overlay-bottom-left-right-group, .videoThumbnailGroupOverlayBottomLeftRightGroup {
+    z-index: 1;
+}
+
+/* Make hover preview work for shorts on mobile */
+.video-preview-shim #player {
+    z-index: 1;
+}
+
+/* Compatibility with Tube Achivist */
+#video-title.ytd-rich-grid-media.ta-title-container {
+    display: flex;
+}
+
+@keyframes rotate {
+	from { transform: rotate(0deg); }
+	  to { transform: rotate(360deg); }
+}
+
+[slTintedPost="1"]:not(a[href*="tiktok.com"]) {
+    position: relative;
+}
+
+[slTintedPost="1"]::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    /* background-color: rgba(255, 129, 81, var(--slTintedPostOpacity, 0)); */
+    background-color: rgba(0, 255, 0, var(--slTintedPostOpacity, 0));
+    /* background-color: rgba(21, 29, 40, var(--slTintedPostOpacity, 0)); */
+    z-index: 1000;
+    transition: background-color 0.3s;
+
+    pointer-events: none;
+}
+
+[slTintedPost="1"]:hover::before {
+    background-color: transparent;
+    transition: background-color 0.3s;
+}
