@@ -20,7 +20,6 @@ setTimeout(() => {
     }
 }, 1)
 const createdButtons: CreatedButton[] = [];
-let currentId: string | null = null;
 
 let elementMutationObserver: MutationObserver | null = null;
 
@@ -46,13 +45,12 @@ export function initSiteHandler() {
 async function pageUrlChanged() {
     if (siteInfo && "selectors" in siteInfo) {
         const nextId = getCurrentID();
-        currentId = nextId;
 
         const getElem = () => document.querySelector((siteInfo as BlogSiteInfoBase).selectors.elementCSSSelector);
         const element = siteInfo.selectors.wait
             ? await waitFor(() => getElem())
             : getElem();
-        if (element) {
+        if (element && nextId) {
             onPostFound(element as HTMLElement, siteInfo.selectors);
         }
     }
