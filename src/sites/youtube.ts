@@ -24,7 +24,7 @@ export const YouTubeSiteInfo: SiteInfo = {
             parent: 0,
             manuallyAlignSubmissionBox: true,
         }],
-        elementCSSSelector: "#above-the-fold",
+        elementCSSSelector: "ytd-watch-metadata",
     },
     browsePageFinder: {
         //todo: use maze utils
