@@ -65,6 +65,7 @@ export interface SiteSelectors {
     buttonPlacements: ButtonPlacement[];
     elementCSSSelector: string;
     wait?: boolean;
+    refreshEvents?: string[];
 }
 
 export interface SocialSelectors extends SiteSelectors {

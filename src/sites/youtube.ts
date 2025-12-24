@@ -26,7 +26,8 @@ export const YouTubeSiteInfo: SiteInfo = {
             wait: true
         }],
         elementCSSSelector: "ytd-watch-metadata",
-        wait: true
+        wait: true,
+        refreshEvents: ["yt-navigate-finish"]
     },
     browsePageFinder: {
         //todo: use maze utils

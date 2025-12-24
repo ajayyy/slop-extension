@@ -46,18 +46,14 @@ export function initSiteHandler() {
 async function pageUrlChanged() {
     if (siteInfo && "selectors" in siteInfo) {
         const nextId = getCurrentID();
+        currentId = nextId;
 
-        if (nextId !== currentId) {
-            currentId = nextId;
-
-            const getElem = () => document.querySelector((siteInfo as BlogSiteInfoBase).selectors.elementCSSSelector);
-
-            const element = siteInfo.selectors.wait
-                ? await waitFor(() => getElem())
-                : getElem();
-            if (element) {
-                onPostFound(element as HTMLElement, siteInfo.selectors);
-            }
+        const getElem = () => document.querySelector((siteInfo as BlogSiteInfoBase).selectors.elementCSSSelector);
+        const element = siteInfo.selectors.wait
+            ? await waitFor(() => getElem())
+            : getElem();
+        if (element) {
+            onPostFound(element as HTMLElement, siteInfo.selectors);
         }
     }
 }
@@ -169,8 +165,8 @@ export function closeAllButtons(skippedButton?: ReportButton) {
 function setupOnUrlChange() {
     // Register listener for URL change via Navigation API
     const navigationApiAvailable = "navigation" in window;
+    const navigationListener = () => void(pageUrlChanged().catch(logError));
     if (navigationApiAvailable) {
-        const navigationListener = () => pageUrlChanged().catch(logError);
         (window as unknown as { navigation: EventTarget }).navigation.addEventListener("navigate", navigationListener);
 
         addCleanupListener(() => {
@@ -178,11 +174,18 @@ function setupOnUrlChange() {
         });
     } else {
         chrome.runtime.onMessage.addListener((request) => {
-        if (request.message === "update") {
-            pageUrlChanged().catch(logError);
-        }
-    });
+            if (request.message === "update") {
+                pageUrlChanged().catch(logError);
+            }
+        });
     }
+
+    if (siteInfo && "selectors" in siteInfo && siteInfo.selectors.refreshEvents) {
+        for (const eventName of siteInfo.selectors.refreshEvents) {
+            document.addEventListener(eventName, navigationListener);
+        }
+    }
+
     // Record availability of Navigation API
     void waitFor(() => Config.local !== null).then(() => {
         if (Config.local!.navigationApiAvailable !== navigationApiAvailable) {
