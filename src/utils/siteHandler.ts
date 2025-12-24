@@ -5,7 +5,7 @@ import { ReportButton } from "../ui/reportButton";
 import { getSubmissions, isAIVote, isNegativeVote, SubmissionData } from "./dataFetching";
 import { log, logError } from "./logger";
 import { findButtonParent, getContentID, getCurrentID, getProfileID, getSiteInfo } from "./siteInfo";
-import { SiteInfo, SiteSelectors, SocialSelectors } from "./siteInfo.types";
+import { BlogSiteInfoBase, SiteInfo, SiteSelectors, SocialSelectors } from "./siteInfo.types";
 
 interface CreatedButton {
     element: HTMLElement;
@@ -38,19 +38,23 @@ export function initSiteHandler() {
             }
         }
 
-        pageUrlChanged();
+        pageUrlChanged().catch(logError);
         setupOnUrlChange();
     }
 }
 
-function pageUrlChanged() {
+async function pageUrlChanged() {
     if (siteInfo && "selectors" in siteInfo) {
         const nextId = getCurrentID();
 
         if (nextId !== currentId) {
             currentId = nextId;
 
-            const element = document.querySelector(siteInfo.selectors.elementCSSSelector);
+            const getElem = () => document.querySelector((siteInfo as BlogSiteInfoBase).selectors.elementCSSSelector);
+
+            const element = siteInfo.selectors.wait
+                ? await waitFor(() => getElem())
+                : getElem();
             if (element) {
                 onPostFound(element as HTMLElement, siteInfo.selectors);
             }
@@ -166,7 +170,7 @@ function setupOnUrlChange() {
     // Register listener for URL change via Navigation API
     const navigationApiAvailable = "navigation" in window;
     if (navigationApiAvailable) {
-        const navigationListener = () => pageUrlChanged();
+        const navigationListener = () => pageUrlChanged().catch(logError);
         (window as unknown as { navigation: EventTarget }).navigation.addEventListener("navigate", navigationListener);
 
         addCleanupListener(() => {
@@ -175,7 +179,7 @@ function setupOnUrlChange() {
     } else {
         chrome.runtime.onMessage.addListener((request) => {
         if (request.message === "update") {
-            pageUrlChanged();
+            pageUrlChanged().catch(logError);
         }
     });
     }

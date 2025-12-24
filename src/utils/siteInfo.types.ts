@@ -64,6 +64,7 @@ export interface SiteSelectors {
     contentId: SelectorPattern[];
     buttonPlacements: ButtonPlacement[];
     elementCSSSelector: string;
+    wait?: boolean;
 }
 
 export interface SocialSelectors extends SiteSelectors {
@@ -90,11 +91,13 @@ export interface SocialSiteInfoBase {
     browsePageFinder?: SocialBrowsePageFinder;
 }
 
-export type SiteInfo = SiteInfoBase & ({
+export interface BlogSiteInfoBase {
     browsePageFinder?: BrowsePageFinder;
     selectors: SiteSelectors;
     type: SiteType.blog;
-} | SocialSiteInfoBase
+}
+
+export type SiteInfo = SiteInfoBase & (BlogSiteInfoBase | SocialSiteInfoBase
   | (SocialSiteInfoBase & {
     selectors: SocialSelectors;
 }));

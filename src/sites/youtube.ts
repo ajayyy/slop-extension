@@ -23,16 +23,18 @@ export const YouTubeSiteInfo: SiteInfo = {
             position: PlacementPosition.Before,
             parent: 0,
             manuallyAlignSubmissionBox: true,
+            wait: true
         }],
         elementCSSSelector: "ytd-watch-metadata",
+        wait: true
     },
     browsePageFinder: {
         //todo: use maze utils
-        elementCSSSelector: "ytd-grid-video-renderer, ytd-video-renderer",
+        elementCSSSelector: "ytd-grid-video-renderer, ytd-video-renderer, yt-lockup-view-model",
         contentId: [{
             type: SelectorPatternType.cssSelector,
             attribute: "href",
-            selector: "a#video-title" //todo: use maze utils
+            selector: "a#video-title, a.yt-lockup-view-model__content-image" //todo: use maze utils
         }],
         profileId: [{
             type: SelectorPatternType.cssSelector,
