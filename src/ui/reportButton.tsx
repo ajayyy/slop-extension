@@ -50,6 +50,8 @@ export class ReportButton {
     referenceNode: HTMLElement;
     buttonPlacement: ButtonPlacementResult;
 
+    mutationObserver: MutationObserver | null = null;
+
     buttonIcon: string;
     buttonTitle: string;
     className: string;
@@ -71,7 +73,6 @@ export class ReportButton {
     }
 
     attachToPage(): void {
-        console.log(this.referenceNode, this.button, this.referenceNode.contains(this.button))
         if (!this.referenceNode.contains(this.button)) {
             if (!this.button) {
                 const existingButton = this.referenceNode.querySelector(`.${this.className}`);
@@ -117,6 +118,18 @@ export class ReportButton {
                     }
                     break;
             }
+
+            if (this.mutationObserver) {
+                this.mutationObserver.disconnect();
+            }
+            this.mutationObserver = new MutationObserver(() => {
+                if (!this.referenceNode.contains(this.button)) {
+                    this.attachToPage();
+                }
+            });
+            this.mutationObserver.observe(this.referenceNode, {
+                childList: true
+            });
 
             if (this.buttonPlacement.getColor) {
                 const color = this.buttonPlacement.getColor(this.postElement, this.button);
@@ -171,6 +184,8 @@ export class ReportButton {
             this.root = null;
             this.container.remove();
             this.container = null;
+            this.mutationObserver?.disconnect();
+            this.mutationObserver = null;
 
             this.updateIcon();
         }

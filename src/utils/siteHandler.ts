@@ -76,7 +76,7 @@ function onMutation(mutations: MutationRecord[]) {
                             // todo: might have to trigger a refresh of displayed information at this point
                             if (button.element === element) continue;
                         }
-    
+
                         onPostFound(element, siteInfo.browsePageFinder);
                     }
                 }
@@ -89,16 +89,21 @@ function onPostFound(element: HTMLElement, selectors: SiteSelectors | SocialSele
     const id = getContentID(element, selectors);
     console.log("post found:", id, "profileId" in selectors ? getProfileID(element, selectors) : null);
 
-    createdButtons.push({
-        element,
-        reportButton: null
-    });
+    let createdButton = createdButtons.find(b => b.element === element);
+    if (!createdButton) {
+        createdButton = {
+            element,
+            reportButton: null
+        };
+
+        createdButtons.push(createdButton);
+    }
 
     const existingVotesPromise = id ? getSubmissions(id) : Promise.resolve([]);
 
     findButtonParent(selectors.buttonPlacements, element).then((buttonParent) => {
         if (buttonParent) {
-            const reportButton = new ReportButton(element, buttonParent);
+            const reportButton = createdButton?.reportButton ??new ReportButton(element, buttonParent);
             reportButton.attachToPage();
 
             if (document.readyState !== "complete") {
@@ -163,7 +168,7 @@ export function closeAllButtons(skippedButton?: ReportButton) {
 function setupOnUrlChange() {
     // Register listener for URL change via Navigation API
     const navigationApiAvailable = "navigation" in window;
-    const navigationListener = () => void(pageUrlChanged().catch(logError));
+    const navigationListener = () => void (pageUrlChanged().catch(logError));
     if (navigationApiAvailable) {
         (window as unknown as { navigation: EventTarget }).navigation.addEventListener("navigate", navigationListener);
 
