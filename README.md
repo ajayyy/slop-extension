@@ -2,6 +2,8 @@
 
 Early alpha prototype!!
 
+No more slop on YouTube, Reddit, Bluesky, TikTok, Twitter and the rest of the web
+
 If you want to help out: https://discord.gg/SponsorBlock
 
 ### Building
