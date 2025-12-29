@@ -11,7 +11,7 @@ export const RedditSiteInfo: SiteInfo = {
         // new, old
         elementCSSSelector: `shreddit-post, [data-context="listing"]:not(.promotedlink)`,
         // Only needs to support new reddit for refreshing
-        elementTagNames: ["article", "main"],
+        elementTagNames: ["article", "main", "div"],
         contentId: [{
             type: SelectorPatternType.function,
             get: (_, element) => {
