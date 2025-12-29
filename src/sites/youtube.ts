@@ -10,7 +10,7 @@ export const YouTubeSiteInfo: SiteInfo = {
             param: "v"
         }, {
             type: SelectorPatternType.pathRegex,
-            selector: "(/shorts/|/embed/|/live/)([^/]{11})$"
+            selector: "(?:/shorts/|/embed/|/live/)([^/]{11})$"
         }],
         profileId: [{
             type: SelectorPatternType.function,
