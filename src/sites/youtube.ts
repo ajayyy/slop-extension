@@ -1,3 +1,4 @@
+import { brandingBoxSelector } from "../../maze-utils/src/thumbnail-selectors";
 import { PlacementPosition, SelectorPatternType, SiteInfo, SiteType } from "../utils/siteInfo.types";
 
 export const YouTubeSiteInfo: SiteInfo = {
@@ -9,7 +10,7 @@ export const YouTubeSiteInfo: SiteInfo = {
             param: "v"
         }, {
             type: SelectorPatternType.pathRegex,
-            selector: "(/shorts/|/embed/)([^/]{11})$"
+            selector: "(/shorts/|/embed/|/live/)([^/]{11})$"
         }],
         profileId: [{
             type: SelectorPatternType.function,
@@ -29,19 +30,17 @@ export const YouTubeSiteInfo: SiteInfo = {
         wait: true
     },
     browsePageFinder: {
-        //todo: use maze utils
-        elementCSSSelector: "ytd-grid-video-renderer, ytd-video-renderer, yt-lockup-view-model",
+        elementCSSSelector: brandingBoxSelector,
         contentId: [{
             type: SelectorPatternType.cssSelector,
             attribute: "href",
-            selector: "a#video-title, a.yt-lockup-view-model__content-image" //todo: use maze utils
+            selector: `a[href*="watch?v="]`
         }],
         profileId: [{
             type: SelectorPatternType.cssSelector,
             attribute: "href",
             selector: "a#channel-name" //todo: use maze utils
         }],
-        //todo: add button placements
         buttonPlacements: []
     }
 };
