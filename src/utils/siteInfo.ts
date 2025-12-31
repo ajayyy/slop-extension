@@ -26,7 +26,7 @@ function getCurrentDomain(): string {
     return hostname.startsWith("www.") ? hostname.slice(4) : hostname;
 }
 
-function executeSelectorPattern(element: HTMLElement, pattern: SelectorPattern): string | null {
+export async function executeSelectorPattern(element: HTMLElement, pattern: SelectorPattern): Promise<string | null> {
     switch (pattern.type) {
         case SelectorPatternType.urlParameter: {
             const urlParams = new URLSearchParams(window.location.search);
@@ -42,18 +42,26 @@ function executeSelectorPattern(element: HTMLElement, pattern: SelectorPattern):
         }
         case SelectorPatternType.cssSelector: {
             const selectedElement = element.querySelector(pattern.selector) as HTMLLinkElement;
+            let result: string | null = null;
             if (selectedElement) {
                 if (pattern.attribute) {
-                    return selectedElement.getAttribute(pattern.attribute);
+                    result = selectedElement.getAttribute(pattern.attribute);
                 } else {
-                    return selectedElement.textContent;
+                    result = selectedElement.textContent;
                 }
             }
 
-            return null;
+            if (result && pattern.postProcessor) {
+                result = pattern.postProcessor(result);
+            }
+
+            return result;
         }
         case SelectorPatternType.function: {
             return pattern.get(window.location.href, element);
+        }
+        case SelectorPatternType.asyncFunction: {
+            return await pattern.get(window.location.href, element);
         }
     }
 }
@@ -71,18 +79,18 @@ export function getSiteInfo(): SiteInfo | null {
     return null;
 }
 
-export function getCurrentID(): string | null {
+export async function getCurrentID(): Promise<string | null> {
     const siteInfo = getSiteInfo();
     if (!siteInfo || (!("selectors" in siteInfo))) return null;
 
-    return runAllSelectors(getCurrentElement(), siteInfo.selectors.contentId);
+    return await runAllSelectors(getCurrentElement(), siteInfo.selectors.contentId);
 }
 
-export function getCurrentProfileID(): string | null {
+export async function getCurrentProfileID(): Promise<string | null> {
     const siteInfo = getSiteInfo();
     if (!siteInfo || siteInfo.type !== "social" || (!("selectors" in siteInfo))) return null;
 
-    return runAllSelectors(getCurrentElement(), siteInfo.selectors.profileId);
+    return await runAllSelectors(getCurrentElement(), siteInfo.selectors.profileId);
 }
 
 export function getCurrentElement(): HTMLElement {
@@ -102,17 +110,17 @@ export function getCurrentElement(): HTMLElement {
 }
 
 
-export function getContentID(element: HTMLElement, selectors: SiteSelectors): string | null {
+export function getContentID(element: HTMLElement, selectors: SiteSelectors): Promise<string | null> {
     return runAllSelectors(element, selectors.contentId);
 }
 
-export function getProfileID(element: HTMLElement, selectors: SocialSelectors): string | null {
+export function getProfileID(element: HTMLElement, selectors: SocialSelectors): Promise<string | null> {
     return runAllSelectors(element, selectors.profileId);
 }
 
-export function runAllSelectors(element: HTMLElement, patterns: SelectorPattern[]): string | null {
+export async function runAllSelectors(element: HTMLElement, patterns: SelectorPattern[]): Promise<string | null> {
     for (const pattern of patterns) {
-        const result = executeSelectorPattern(element, pattern);
+        const result = await executeSelectorPattern(element, pattern);
         
         if (result) {
             return result;

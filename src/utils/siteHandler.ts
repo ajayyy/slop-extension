@@ -28,7 +28,7 @@ export function initSiteHandler() {
         if (siteInfo.browsePageFinder) {
             const elements = Array.from(document.querySelectorAll(siteInfo.browsePageFinder.elementCSSSelector));
             for (const element of elements) {
-                onPostFound(element as HTMLElement, siteInfo.browsePageFinder);
+                onPostFound(element as HTMLElement, siteInfo.browsePageFinder).catch(logError);
             }
 
             if (!siteInfo.browsePageFinder.dontListenForNewElements) {
@@ -44,14 +44,14 @@ export function initSiteHandler() {
 
 async function pageUrlChanged() {
     if (siteInfo && "selectors" in siteInfo) {
-        const nextId = getCurrentID();
+        const nextId = await getCurrentID();
 
         const getElem = () => document.querySelector((siteInfo as BlogSiteInfoBase).selectors.elementCSSSelector);
         const element = siteInfo.selectors.wait
             ? await waitFor(() => getElem())
             : getElem();
         if (element && nextId) {
-            onPostFound(element as HTMLElement, siteInfo.selectors);
+            await onPostFound(element as HTMLElement, siteInfo.selectors);
         }
     }
 }
@@ -77,7 +77,7 @@ function onMutation(mutations: MutationRecord[]) {
                             if (button.element === element) continue;
                         }
 
-                        onPostFound(element, siteInfo.browsePageFinder);
+                        onPostFound(element, siteInfo.browsePageFinder).catch(logError);
                     }
                 }
             }
@@ -85,9 +85,9 @@ function onMutation(mutations: MutationRecord[]) {
     }
 }
 
-function onPostFound(element: HTMLElement, selectors: SiteSelectors | SocialSelectors) {
-    const id = getContentID(element, selectors);
-    console.log("post found:", id, "profileId" in selectors ? getProfileID(element, selectors) : null);
+async function onPostFound(element: HTMLElement, selectors: SiteSelectors | SocialSelectors) {
+    const id = await getContentID(element, selectors);
+    console.log("post found:", id, "profileId" in selectors ? await getProfileID(element, selectors) : null);
 
     let createdButton = createdButtons.find(b => b.element === element);
     if (!createdButton) {

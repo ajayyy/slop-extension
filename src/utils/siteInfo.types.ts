@@ -8,7 +8,8 @@ export enum SelectorPatternType {
     pathIndex = "path",
     pathRegex = "pathRegex",
     cssSelector = "css",
-    function = "function"
+    function = "function",
+    asyncFunction = "asyncFunction"
 }
 
 export type SelectorPattern = {
@@ -24,9 +25,13 @@ export type SelectorPattern = {
     type: SelectorPatternType.cssSelector;
     selector: string;
     attribute?: string;
+    postProcessor?: (value: string) => string;
 } | {
     type: SelectorPatternType.function;
     get: (url: string, element: HTMLElement) => string | null;
+} | {
+    type: SelectorPatternType.asyncFunction;
+    get: (url: string, element: HTMLElement) => Promise<string | null>;
 };
 
 export enum PlacementPosition {
