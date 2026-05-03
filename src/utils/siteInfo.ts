@@ -40,6 +40,10 @@ export async function executeSelectorPattern(element: HTMLElement, pattern: Sele
             const match = window.location.pathname.match(pattern.selector);
             return match ? match[1] : null;
         }
+        case SelectorPatternType.hrefRegex: {
+            const match = window.location.href.match(pattern.selector);
+            return match ? match[1] : null;
+        }
         case SelectorPatternType.cssSelector: {
             const selectedElement = element.querySelector(pattern.selector) as HTMLLinkElement;
             let result: string | null = null;

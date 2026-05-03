@@ -7,6 +7,7 @@ export enum SelectorPatternType {
     urlParameter = "url",
     pathIndex = "path",
     pathRegex = "pathRegex",
+    hrefRegex = "hrefRegex",
     cssSelector = "css",
     function = "function",
     asyncFunction = "asyncFunction"
@@ -20,6 +21,9 @@ export type SelectorPattern = {
     index: number;
 } | {
     type: SelectorPatternType.pathRegex;
+    selector: string;
+} | {
+    type: SelectorPatternType.hrefRegex;
     selector: string;
 } | {
     type: SelectorPatternType.cssSelector;

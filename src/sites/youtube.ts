@@ -1,4 +1,4 @@
-import { getChannelID } from "../../maze-utils/src/metadataFetcher";
+import { getChannelHandleFromVideo } from "../../maze-utils/src/metadataFetcher";
 import { brandingBoxSelector } from "../../maze-utils/src/thumbnail-selectors";
 import { VideoID } from "../../maze-utils/src/video";
 import { executeSelectorPattern } from "../utils/siteInfo";
@@ -11,7 +11,6 @@ const contentIdPattern: SelectorPattern = {
     attribute: "href",
     selector: `a[href*="watch?v="]`,
     postProcessor: (value: string) => {
-        console.log(value)
         return value.match(contentIdRegex)?.[1] || "";
     }
 };
@@ -21,7 +20,7 @@ export const YouTubeSiteInfo: SiteInfo = {
     type: SiteType.social,
     selectors: {
         contentId: [{
-            type: SelectorPatternType.pathRegex,
+            type: SelectorPatternType.hrefRegex,
             selector: contentIdRegex
         }],
         profileId: [{
@@ -52,8 +51,7 @@ export const YouTubeSiteInfo: SiteInfo = {
 async function getProfileID(url: string, element: HTMLElement): Promise<string | null> {
     const videoID = await executeSelectorPattern(element, contentIdPattern) as VideoID | null;
     if (videoID) {
-        const channelInfo = await getChannelID(videoID);
-        return channelInfo?.channelID || null;
+        return await getChannelHandleFromVideo(videoID) || null;
     }
 
     return null;
@@ -62,8 +60,7 @@ async function getProfileID(url: string, element: HTMLElement): Promise<string |
 async function getProfileIDByUrl(url: string): Promise<string | null> {
     const videoID = url.match(contentIdRegex)?.[1] as VideoID | null;
     if (videoID) {
-        const channelInfo = await getChannelID(videoID);
-        return channelInfo?.channelID || null;
+        return await getChannelHandleFromVideo(videoID) || null;
     }
 
     return null;
