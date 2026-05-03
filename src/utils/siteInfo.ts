@@ -134,41 +134,51 @@ export async function runAllSelectors(element: HTMLElement, patterns: SelectorPa
     return null;
 }
 
-export async function findButtonParent(buttonPlacements: ButtonPlacement[], element: HTMLElement): Promise<ButtonPlacementResult | null> {
-    for (const placement of buttonPlacements) {
-        let baseElement: HTMLElement | ShadowRoot | null = element;
-        if (placement.shadowRoot) {
-            baseElement = element.shadowRoot || await waitFor(() => element.shadowRoot);
-            if (baseElement === null) continue;
-        }
-
-        const getElem = () => "selector" in placement
-            ? baseElement!.querySelector(placement.selector)
-            : placement.getElement(baseElement as HTMLElement);
-
-        let selectedElement = placement.wait
-            ? await waitFor(() => getElem())
-            : getElem();
-        if (selectedElement) {
-            for (let i = 0; i < (placement.parent || 0); i++) {
-                if (selectedElement.parentElement) {
-                    selectedElement = selectedElement.parentElement;
+export function findButtonParent(buttonPlacements: ButtonPlacement[], element: HTMLElement): Promise<ButtonPlacementResult | null> {
+    let found = false;
+    try {
+        return Promise.any(buttonPlacements.map(async (placement) => {
+            let baseElement: HTMLElement | ShadowRoot | null = element;
+            if (placement.shadowRoot) {
+                baseElement = element.shadowRoot || await waitFor(() => element.shadowRoot);
+                if (baseElement === null) throw Error("No base element");
+            }
+    
+            const getElem = () => "selector" in placement
+                ? baseElement!.querySelector(placement.selector)
+                : placement.getElement(baseElement as HTMLElement);
+    
+            let selectedElement = placement.wait
+                ? await waitFor(() => getElem())
+                : getElem();
+    
+            // If another already found, use the first one
+            if (found) throw Error("Already found, give up");
+            found = true;
+    
+            if (selectedElement) {
+                for (let i = 0; i < (placement.parent || 0); i++) {
+                    if (selectedElement.parentElement) {
+                        selectedElement = selectedElement.parentElement;
+                    }
+                }
+    
+                if (selectedElement) {
+                    return {
+                        element: selectedElement as HTMLElement,
+                        position: placement.position,
+                        relativeElementSelector: placement.relativeElementSelector,
+                        manuallyAlignSubmissionBox: placement.manuallyAlignSubmissionBox,
+                        alignSubmissionBoxWithElement: placement.alignSubmissionBoxWithElement,
+                        getColor: placement.getColor,
+                        postProcessor: placement.postProcessor
+                    };
                 }
             }
 
-            if (selectedElement) {
-                return {
-                    element: selectedElement as HTMLElement,
-                    position: placement.position,
-                    relativeElementSelector: placement.relativeElementSelector,
-                    manuallyAlignSubmissionBox: placement.manuallyAlignSubmissionBox,
-                    alignSubmissionBoxWithElement: placement.alignSubmissionBoxWithElement,
-                    getColor: placement.getColor,
-                    postProcessor: placement.postProcessor
-                };
-            }
-        }
+            throw Error("No selected element");
+        }));
+    } catch (e) {
+        return Promise.resolve(null);
     }
-
-    return null;
 }

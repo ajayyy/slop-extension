@@ -64,6 +64,19 @@ export const TikTokSiteInfo: SiteInfo = {
             postProcessor: (e, button) => {
                 button.style.zIndex = "1000";
             }
+        }, {
+            selector: '[data-e2e="explore-card-info"]',
+            position: PlacementPosition.After,
+            wait: true,
+            parent: 0,
+            manuallyAlignSubmissionBox: true,
+            postProcessor: (e, button) => {
+                button.style.zIndex = "1000";
+                const parent = button.parentElement;
+                if (parent) {
+                    parent.style.justifyContent = "start";
+                }
+            }
         }]
     }
 };

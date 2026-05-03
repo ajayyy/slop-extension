@@ -13,7 +13,7 @@
         "resolveJsonModule": true,
         "jsx": "react",
         "lib": [
-            "es2019",
+            "es2021",
             "dom",
             "dom.iterable"
         ]
