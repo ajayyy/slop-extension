@@ -1,12 +1,13 @@
 import * as React from "react";
-import { getVideoID } from "../../maze-utils/src/video";
-import Config from "../config/config";
 import { createRoot, Root } from "react-dom/client";
-import { SubmissionData } from "../utils/dataFetching";
-import { ReportInterfaceComponent } from "./ReportInterfaceComponent";
+import Config from "../config/config";
+import { SubmissionData, submitVote, ToSubmitData } from "../utils/dataFetching";
 import { logError } from "../utils/logger";
-import { ButtonPlacementResult, PlacementPosition } from "../utils/siteInfo.types";
 import { closeAllButtons } from "../utils/siteHandler";
+import { ButtonPlacementResult, PlacementPosition } from "../utils/siteInfo.types";
+import { ReportInterfaceComponent } from "./ReportInterfaceComponent";
+import { FetchResponse } from "../../maze-utils/src/background-request-proxy";
+import { formatJSErrorMessage, getLongErrorMessage } from "../../maze-utils/src/formating";
 
 
 //todo: sometimes make it solid colour based on the website theme
@@ -56,7 +57,9 @@ export class ReportButton {
     buttonTitle: string;
     className: string;
 
-    existingVotes: SubmissionData[];
+    existingVotes: SubmissionData;
+    contentID: string | null;
+    profileID: string | null;
 
     constructor(postElement: HTMLElement, buttonPlacement: ButtonPlacementResult) {
         this.postElement = postElement;
@@ -69,7 +72,11 @@ export class ReportButton {
         this.container = null;
         this.root = null;
 
-        this.existingVotes = [];
+        this.existingVotes = {
+            content: []
+        };
+        this.contentID = null;
+        this.profileID = null;
     }
 
     attachToPage(): void {
@@ -192,63 +199,55 @@ export class ReportButton {
     }
 
     clearExistingVotes(): void {
-        this.existingVotes = [];
+        this.existingVotes = {
+            content: []
+        };
     }
 
-    setExistingVotes(existingVotes: SubmissionData[]): void {
+    setExistingVotes(existingVotes: SubmissionData): void {
         this.existingVotes = existingVotes;
         this.render();
+    }
+
+    setContentID(contentID: string | null, profileID: string | null): void {
+        this.contentID = contentID;
+        this.profileID = profileID;
     }
 
     render(): void {
         if (this.root) {
             this.root?.render(<ReportInterfaceComponent
-                videoID={getVideoID()!}
                 existingVotes={this.existingVotes}
-                submitClicked={(slop, subjective) => this.submitPressed(slop, subjective)}
+                submitClicked={(data) => this.submitPressed(data)}
             />);
         }
     }
 
-    private async submitPressed(slopVoteTypes: string[], subjectiveVoteTypes: string[]): Promise<boolean> {
-        console.log(slopVoteTypes, subjectiveVoteTypes)
-        return await Promise.resolve(false);
-        //todo: handle submission
-        // if (getVideoID() !== getYouTubeVideoID()) {
-        //     alert(chrome.i18n.getMessage("videoIDWrongWhenSubmittingError"));
-        //     return false;
-        // }
+    private async submitPressed(data: ToSubmitData): Promise<boolean> {
+        if (!this.contentID) {
+            //todo: better error message
+            alert("Content ID not parsed properly");
+            return false;
+        }
+        
+        let result: FetchResponse;
+        try {
+            result = await submitVote(this.contentID, this.profileID, data);
+        } catch (e) {
+            logError("Caught error while submitting vote", e);
+            alert(formatJSErrorMessage(e));
+            return false;
+        }
 
-        // let result: FetchResponse;
-        // try {
-        //     result = await submitVideoCasualVote(getVideoID()!, categories, downvote);
-        // } catch (e) {
-        //     logError("Caught error while submitting casual title vote", e);
-        //     alert(formatJSErrorMessage(e));
-        //     return false;
-        // }
+        if (result && result.ok) {
+            this.close();
 
-        // if (result && result.ok) {
-        //     this.close();
-
-        //     if (shouldStoreVotes()) {
-        //         const unsubmitted = Config.local!.unsubmitted[getVideoID()!] ??= {
-        //             thumbnails: [],
-        //             titles: []
-        //         };
-
-        //         unsubmitted.casual = !downvote;
-        //         Config.forceLocalUpdate("unsubmitted");
-        //     }
-
-        //     setTimeout(() => replaceCurrentVideoBranding().catch(logError), 1100);
-
-        //     return true;
-        // } else {
-        //     logRequest(result, "CB", "casual title vote");
-        //     alert(getLongErrorMessage(result.status, result.responseText));
-        //     return false;
-        // }
+            // todo: handle storing locally
+            return true;
+        } else {
+            alert(getLongErrorMessage(result.status, result.responseText));
+            return false;
+        }
     }
 
     updateIcon(): void {

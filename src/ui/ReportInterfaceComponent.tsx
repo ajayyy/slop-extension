@@ -1,6 +1,5 @@
 import * as React from "react";
-import { VideoID } from "../../maze-utils/src/video";
-import { SubmissionData } from "../utils/dataFetching";
+import { SubmissionData, ToSubmitData } from "../utils/dataFetching";
 
 interface VoteType {
     id: string;
@@ -21,6 +20,10 @@ const slopVoteTypes: VoteType[] = [{
 }, {
     id: "ai-music",
     key: "slopCategoryAIMusic",
+    videoOnly: true
+}, {
+    id: "ai-graphics",
+    key: "slopCategoryAIGraphics",
     videoOnly: true
 }, {
     id: "clip-mashup",
@@ -45,6 +48,10 @@ const subjectiveVoteTypes: VoteType[] = [{
     key: "slopCategoryEntertaining",
     type: 1
 }, {
+    id: "creative",
+    key: "slopCategoryCreative",
+    type: 1
+}, {
     id: "informative",
     key: "slopCategoryInformative",
     type: 1
@@ -62,11 +69,12 @@ const subjectiveVoteTypes: VoteType[] = [{
     type: 2
 }];
 
+//todo: add five star overall rating
+
 export interface ReportInterfaceComponentProps {
-    videoID: VideoID;
-    existingVotes: SubmissionData[];
+    existingVotes: SubmissionData;
     
-    submitClicked: (slopVoteTypes: string[], subjectiveVoteTypes: string[]) => Promise<boolean>;
+    submitClicked: (data: ToSubmitData) => Promise<boolean>;
 }
 
 export const ReportInterfaceComponent = (props: ReportInterfaceComponentProps) => {
@@ -110,10 +118,17 @@ export const ReportInterfaceComponent = (props: ReportInterfaceComponentProps) =
 
             <div className="cbVoteButtonContainer">
                 <button className="cbNoticeButton cbVoteButton"
-                    disabled={currentlySubmitting || !voteInfoReady}
+                    disabled={currentlySubmitting || (!voteInfoReady && !allHuman)}
                     onClick={() => {
                         //todo: handle submission
-                        // props.submitClicked(downvote ? [] : [...voteInfo.current], downvote);
+
+                        const votes = [...voteInfo.current];
+                        if (allHuman) votes.push("human")
+                        props.submitClicked({
+                            votes,
+                            comment: "Hi", //todo: add this to the UI
+                            rating: 5
+                        }).then(() => setCurrentlySubmitting(false));
 
                         setCurrentlySubmitting(true);
                     }}>
@@ -128,7 +143,7 @@ interface CheckboxesProps {
     voteInfo: Set<string>;
     voteTypes: VoteType[];
     show: boolean;
-    existingVotes: SubmissionData[];
+    existingVotes: SubmissionData;
     setVoteInfoReady: (v: boolean) => void;
 }
 
@@ -138,13 +153,14 @@ function Checkboxes(props: CheckboxesProps): React.ReactElement {
     const [checkedCount, setCheckedCount] = React.useState<number>(0);
 
     for (const category of props.voteTypes) {
-        const existingVote = props.existingVotes.find((v) => v.id === category.id);
+        //todo: display profile votes in some way too
+        const existingVote = props.existingVotes.content.find((v) => v.id === category.id);
 
         result.push(
             <Checkbox
                 key={category.id}
                 langKey={category.key}
-                subtitle={existingVote ? getVotesText(existingVote.upvotes - existingVote.downvotes) : undefined}
+                subtitle={existingVote ? getVotesText(existingVote.votes) : undefined}
                 onChange={(checked) => {
                     if (checked) {
                         props.voteInfo.add(category.id);

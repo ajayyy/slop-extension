@@ -86,8 +86,8 @@ function onMutation(mutations: MutationRecord[]) {
 }
 
 async function onPostFound(element: HTMLElement, selectors: SiteSelectors | SocialSelectors) {
-    const id = await getContentID(element, selectors);
-    console.log("post found:", id, "profileId" in selectors ? await getProfileID(element, selectors) : null);
+    const contentID = await getContentID(element, selectors);
+    const profileID = "profileId" in selectors ? await getProfileID(element, selectors) : null;
 
     let createdButton = createdButtons.find(b => b.element === element);
     if (!createdButton) {
@@ -99,11 +99,12 @@ async function onPostFound(element: HTMLElement, selectors: SiteSelectors | Soci
         createdButtons.push(createdButton);
     }
 
-    const existingVotesPromise = id ? getSubmissions(id) : Promise.resolve([]);
+    const existingVotesPromise = contentID ? getSubmissions(contentID, profileID) : Promise.resolve([]);
+    createdButton?.reportButton?.setContentID(null, null);
 
     findButtonParent(selectors.buttonPlacements, element).then((buttonParent) => {
         if (buttonParent) {
-            const reportButton = createdButton?.reportButton ??new ReportButton(element, buttonParent);
+            const reportButton = createdButton?.reportButton ?? new ReportButton(element, buttonParent);
             reportButton.attachToPage();
 
             if (document.readyState !== "complete") {
@@ -114,6 +115,7 @@ async function onPostFound(element: HTMLElement, selectors: SiteSelectors | Soci
             }
 
             existingVotesPromise.then((existingVotes) => reportButton!.setExistingVotes(existingVotes)).catch(logError);
+            reportButton!.setContentID(contentID, profileID);
 
             for (const createdButton of createdButtons) {
                 if (createdButton.element === element) {
@@ -123,19 +125,21 @@ async function onPostFound(element: HTMLElement, selectors: SiteSelectors | Soci
             }
         }
     }).catch(() => {
-        log("Failed to find button parent", id);
+        log("Failed to find button parent", contentID);
     });
 
-    if (id) {
+    if (contentID) {
         existingVotesPromise.then((existingVotes) => {
             tintPost(element, existingVotes);
         }).catch(logError);
     }
 }
 
-function tintPost(element: HTMLElement, existingVotes: SubmissionData[]) {
-    for (const vote of existingVotes.sort((a, b) => (b.upvotes - b.downvotes) - (a.upvotes - a.downvotes))) {
-        const votes = vote.upvotes - vote.downvotes;
+function tintPost(element: HTMLElement, existingVotes: SubmissionData) {
+    //todo: treat "all human" votes as downvotes
+    //todo: handle profile votes in some way
+    for (const vote of existingVotes.content.sort((a, b) => (b.votes) - (a.votes))) {
+        const votes = vote.votes;
         if (votes > 0) {
             if (isAIVote(vote)) {
                 //todo: combine multiple ai votes to get poweer of tint (average?)

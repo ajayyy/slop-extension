@@ -1,14 +1,34 @@
-// import { VideoID } from "../../maze-utils/src/video";
+import { extensionUserAgent } from "../../maze-utils/src";
+import { getHash } from "../../maze-utils/src/hash";
+import Config from "../config/config";
+import { sendRequestToServer } from "./requests";
+
+export interface VoteInfo {
+    id: string;
+    votes: number;
+    profileID?: string;
+}
+
+export interface ProfileVoteInfo {
+    id: string;
+    votes: number;
+    voteSum: number;
+}
 
 export interface SubmissionData {
-    id: string;
-    upvotes: number;
-    downvotes: number;
+    content: VoteInfo[];
+    profile?: ProfileVoteInfo[] | null;
 }
 
 interface SubmissionsCacheRecord {
-    data: SubmissionData[];
+    data: SubmissionData;
     lastUsed: number;
+}
+
+export interface ToSubmitData {
+    comment?: string;
+    rating?: number;
+    votes: string[];
 }
 
 const cache: Record<string, SubmissionsCacheRecord> = {};
@@ -28,23 +48,22 @@ const negativeVoteIDs = [
     "misleading"
 ];
 
-export function isAIVote(submission: SubmissionData): boolean {
+export function isAIVote(submission: VoteInfo): boolean {
     return aiVoteIDs.includes(submission.id);
 }
 
-export function isNegativeVote(submission: SubmissionData): boolean {
+export function isNegativeVote(submission: VoteInfo): boolean {
     return negativeVoteIDs.includes(submission.id);
 }
 
-export async function getSubmissions(id: string): Promise<SubmissionData[]> {
-    const cachedValue = cache[id];
+export async function getSubmissions(contentID: string, profileID: string | null): Promise<SubmissionData> {
+    const cachedValue = cache[getCacheKey(contentID, profileID)];
 
     if (cachedValue) {
         return cachedValue.data;
     } else {
-        //todo: handle getting more data because query by hash
-        const submissions = await fetchSubmissions(id);
-        cache[id] = {
+        const submissions = await fetchSubmissions(contentID, profileID);
+        cache[getCacheKey(contentID, profileID)] = {
             data: submissions,
             lastUsed: Date.now()
         };
@@ -64,34 +83,78 @@ export async function getSubmissions(id: string): Promise<SubmissionData[]> {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function fetchSubmissions(id: string): Promise<SubmissionData[]> {
-    //todo:
-    await true;
+async function fetchSubmissions(contentID: string, profileID: string | null): Promise<SubmissionData> {
+    const contentPrefix = (await getHash(contentID, 1)).slice(0, 4);
+    const profilePrefix = profileID ? (await getHash(profileID, 1)).slice(0, 4) : null;
+    const request = await sendRequestToServer("GET", `/api/slopByHash`, {
+        contentPrefix,
+        profilePrefix
+    });
 
-    if (Math.random() < 0.5) {
-        if (Math.random() < 0.5) {
-            return [
-                {
-                    id: "tts",
-                    upvotes: Math.random() * 5,
-                    downvotes: 0
-                }
-            ];
-        } else {
-            return [
-                {
-                    id: "low-quality",
-                    upvotes: 4,
-                    downvotes: 0
-                }
-            ];
-        }
+    if (request && request.ok) {
+        const json = JSON.parse(request.responseText);
+        const contentData = json.content[contentID];
+
+        const profileIDToCheck = profileID || (contentData && contentData[0]?.profileID);
+        const profileData = json.profile[profileIDToCheck] ?? null;
+
+        console.log(contentData, profileData)
+
+        return {
+            content: contentData ?? [],
+            profile: profileData
+        };
     }
 
-    return [];
+
+    // if (Math.random() < 0.5) {
+    //     if (Math.random() < 0.5) {
+    //         return [
+    //             {
+    //                 id: "tts",
+    //                 votes: Math.random() * 5
+    //             }
+    //         ];
+    //     } else {
+    //         return [
+    //             {
+    //                 id: "low-quality",
+    //                 votes: 4
+    //             }
+    //         ];
+    //     }
+    // }
+
+    return {
+        content: []
+    };
+}
+
+export async function submitVote(contentID: string, profileID: string | null, data: ToSubmitData) {
+    const result = await sendRequestToServer("POST", "/api/slop", {
+        userID: Config.config!.userID,
+        contentID,
+        profileID,
+        votes: data.votes,
+        comment: data.comment,
+        rating: data.rating,
+        userAgent: extensionUserAgent()
+    });
+
+    clearCache(contentID, profileID)
+
+    return result;
 }
 
 // function getSubmissionsForYT(videoID: VideoID): Promise<SubmissionData> {
 //     //todo:
 //     return Promise.resolve({} as SubmissionData);
 // }
+
+export function clearCache(contentID: string, profileID: string | null) {
+    delete cache[getCacheKey(contentID, profileID)];
+}
+
+export function getCacheKey(contentID: string, profileID: string | null) {
+    return contentID + (profileID ? `.p.${profileID}` : "");
+}
