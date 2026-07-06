@@ -7,9 +7,11 @@ import * as CompileConfig from "../config.json";
 import { isFirefoxOrSafari } from "../maze-utils/src";
 import { logError } from "./utils/logger";
 import { waitFor } from "../maze-utils/src";
+import { setupBackgroundBloom } from "./utils/bloomFilter";
 
 setupTabUpdates(Config);
 setupBackgroundRequestProxy();
+setupBackgroundBloom();
 
 waitFor(() => Config.isReady()).then(() => {
     // Check every time since sometimes initial onInstall isn't called

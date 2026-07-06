@@ -6,6 +6,7 @@ interface VoteType {
     key: string;
     textKey?: string;
     videoOnly?: boolean;
+    notAi?: boolean;
     type?: number; // to restrict contradicting votes
 }
 
@@ -26,47 +27,56 @@ const slopVoteTypes: VoteType[] = [{
     key: "slopCategoryAIGraphics",
     videoOnly: true
 }, {
-    id: "clip-mashup",
-    key: "slopCategoryClipMashupReupload",
-    textKey: "slopCategoryRepostOfAnotherWebsite"
-}, {
-    id: "fiction",
-    key: "slopCategorySkitFictionParody",
-    textKey: "slopCategoryFictionParody"
-}, {
     id: "ai-topic",
     key: "slopCategoryAboutAI",
     textKey: "slopCategoryFictionParody"
+}, {
+    id: "clip-mashup",
+    key: "slopCategoryClipMashupReupload",
+    textKey: "slopCategoryRepostOfAnotherWebsite",
+    notAi: true
+}, {
+    id: "fiction",
+    key: "slopCategorySkitFictionParody",
+    textKey: "slopCategoryFictionParody",
+    notAi: true
 }];
 
 const subjectiveVoteTypes: VoteType[] = [{
     id: "funny",
     key: "slopCategoryFunny",
-    type: 1
+    type: 1,
+    notAi: true
 }, {
     id: "entertaining",
     key: "slopCategoryEntertaining",
-    type: 1
+    type: 1,
+    notAi: true
 }, {
     id: "creative",
     key: "slopCategoryCreative",
-    type: 1
+    type: 1,
+    notAi: true
 }, {
     id: "informative",
     key: "slopCategoryInformative",
-    type: 1
+    type: 1,
+    notAi: true
 }, {
     id: "boring",
     key: "slopCategoryBoring",
-    type: 2
+    type: 2,
+    notAi: true
 }, {
     id: "low-quality",
     key: "slopCategoryLowQuality",
-    type: 2
+    type: 2,
+    notAi: true
 }, {
     id: "misleading",
     key: "slopCategoryMisleading",
-    type: 2
+    type: 2,
+    notAi: true
 }];
 
 //todo: add five star overall rating
@@ -82,6 +92,7 @@ export const ReportInterfaceComponent = (props: ReportInterfaceComponentProps) =
     const [voteInfoReady, setVoteInfoReady] = React.useState(false);
     const [currentlySubmitting, setCurrentlySubmitting] = React.useState(false);
     const [allHuman, setAllHuman] = React.useState<boolean>(false);
+    const textArea = React.useRef<HTMLTextAreaElement>(null);
 
     return (
         <div className="slopVoteMenuInner"
@@ -100,7 +111,7 @@ export const ReportInterfaceComponent = (props: ReportInterfaceComponentProps) =
             <div className="slopBoxContainer">
                 <Checkboxes
                     voteInfo={voteInfo.current}
-                    show={!allHuman}
+                    allHuman={allHuman}
                     existingVotes={props.existingVotes}
                     setVoteInfoReady={setVoteInfoReady}
                     voteTypes={slopVoteTypes}
@@ -108,10 +119,19 @@ export const ReportInterfaceComponent = (props: ReportInterfaceComponentProps) =
 
                 <Checkboxes
                     voteInfo={voteInfo.current}
-                    show={true}
+                    allHuman={allHuman}
                     existingVotes={props.existingVotes}
                     setVoteInfoReady={setVoteInfoReady}
                     voteTypes={subjectiveVoteTypes}
+                />
+            </div>
+
+            <div className="slopCommentContainer">
+                <textarea id="slopCommentBox" 
+                    rows={5}
+                    style={{ width: "80%" }} 
+                    ref={textArea}
+                    placeholder={chrome.i18n.getMessage("slopCommentBox")}
                 />
             </div>
 
@@ -120,14 +140,12 @@ export const ReportInterfaceComponent = (props: ReportInterfaceComponentProps) =
                 <button className="cbNoticeButton cbVoteButton"
                     disabled={currentlySubmitting || (!voteInfoReady && !allHuman)}
                     onClick={() => {
-                        //todo: handle submission
-
                         const votes = [...voteInfo.current];
                         if (allHuman) votes.push("human")
                         props.submitClicked({
                             votes,
-                            comment: "Hi", //todo: add this to the UI
-                            rating: 5
+                            comment: textArea?.current?.textContent || undefined,
+                            rating: 5 //todo: add this to the ui
                         }).then(() => setCurrentlySubmitting(false));
 
                         setCurrentlySubmitting(true);
@@ -142,7 +160,7 @@ export const ReportInterfaceComponent = (props: ReportInterfaceComponentProps) =
 interface CheckboxesProps {
     voteInfo: Set<string>;
     voteTypes: VoteType[];
-    show: boolean;
+    allHuman: boolean;
     existingVotes: SubmissionData;
     setVoteInfoReady: (v: boolean) => void;
 }
@@ -168,7 +186,6 @@ function Checkboxes(props: CheckboxesProps): React.ReactElement {
                         if (category.type) {
                             setCheckedType(category.type);
                             setCheckedCount(checkedCount + 1);
-                            console.log(checkedType);
                         }
                     } else {
                         props.voteInfo.delete(category.id);
@@ -183,7 +200,9 @@ function Checkboxes(props: CheckboxesProps): React.ReactElement {
 
                     props.setVoteInfoReady(props.voteInfo.size > 0);
                 }}
-                disabled={checkedType !== null && category.type !== undefined && checkedType !== category.type}
+                disabled={(checkedType !== null && category.type !== undefined && checkedType !== category.type)
+                        || (props.allHuman && !category.notAi)
+                }
                 showCheckbox={true}
             />
         );
@@ -191,7 +210,7 @@ function Checkboxes(props: CheckboxesProps): React.ReactElement {
 
     return (
         <div style={{ display: "flex", justifyContent: "center" }}>
-            <div style={{ visibility: props.show ? "visible" : "hidden" }}>
+            <div>
                 {result}
             </div>
         </div>

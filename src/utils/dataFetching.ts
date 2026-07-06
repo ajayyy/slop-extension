@@ -1,5 +1,4 @@
 import { extensionUserAgent } from "../../maze-utils/src";
-import { getHash } from "../../maze-utils/src/hash";
 import Config from "../config/config";
 import { sendRequestToServer } from "./requests";
 
@@ -82,52 +81,20 @@ export async function getSubmissions(contentID: string, profileID: string | null
     }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function fetchSubmissions(contentID: string, profileID: string | null): Promise<SubmissionData> {
-    const contentPrefix = (await getHash(contentID, 1)).slice(0, 4);
-    const profilePrefix = profileID ? (await getHash(profileID, 1)).slice(0, 4) : null;
-    const request = await sendRequestToServer("GET", `/api/slopByHash`, {
-        contentPrefix,
-        profilePrefix
+function fetchSubmissions(contentID: string, profileID: string | null): Promise<SubmissionData> {
+    return new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage({
+            message: "fetchSubmissions",
+            contentID,
+            profileID
+        }, (response) => {
+            if ("error" in response) {
+                reject(response.error);
+            } else {
+                resolve(response);
+            }
+        });
     });
-
-    if (request && request.ok) {
-        const json = JSON.parse(request.responseText);
-        const contentData = json.content[contentID];
-
-        const profileIDToCheck = profileID || (contentData && contentData[0]?.profileID);
-        const profileData = json.profile[profileIDToCheck] ?? null;
-
-        console.log(contentData, profileData)
-
-        return {
-            content: contentData ?? [],
-            profile: profileData
-        };
-    }
-
-
-    // if (Math.random() < 0.5) {
-    //     if (Math.random() < 0.5) {
-    //         return [
-    //             {
-    //                 id: "tts",
-    //                 votes: Math.random() * 5
-    //             }
-    //         ];
-    //     } else {
-    //         return [
-    //             {
-    //                 id: "low-quality",
-    //                 votes: 4
-    //             }
-    //         ];
-    //     }
-    // }
-
-    return {
-        content: []
-    };
 }
 
 export async function submitVote(contentID: string, profileID: string | null, data: ToSubmitData) {

@@ -20,8 +20,18 @@ interface SBConfig {
     enableExtensionKey: Keybind;
 }
 
+interface BloomFilterStored {
+    timeFetched: number;
+    timeGenerated: number;
+    lastUpdate: number;
+    numberOfHashes: number;
+    data: string;
+}
+
 interface SBStorage {
     navigationApiAvailable: boolean;
+    //todo: switch to not loading this every time into memory, only save in background script
+    bloom: Record<string, BloomFilterStored>;
 }
 
 class ConfigClass extends ProtoConfig<SBConfig, SBStorage> {
@@ -61,7 +71,8 @@ const syncDefaults = {
 
 const localDefaults = {
     navigationApiAvailable: false,
-    unsubmitted: {}
+    unsubmitted: {},
+    bloom: {} //todo: maybe don't load this every time into here because it will slow down content script
 };
 
 const Config = new ConfigClass(syncDefaults, localDefaults, migrateOldSyncFormats, true);

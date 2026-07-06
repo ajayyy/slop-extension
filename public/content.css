@@ -676,6 +676,17 @@ ytd-compact-playlist-renderer .ytd-compact-playlist-renderer #video-title:not(.c
     justify-content: center;
 }
 
+.slopCommentContainer {
+    display: flex;
+    justify-content: center;
+}
+
+#slopCommentBox {
+    background-color: black;
+    color: white;
+    border: none;
+}
+
 .cbCasualVoteDescription {
     font-size: 14px;
     padding-left: 15px;
