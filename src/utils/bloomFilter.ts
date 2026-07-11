@@ -1,4 +1,6 @@
+import { waitFor } from "../../maze-utils/src";
 import { sendRealRequestToCustomServer } from "../../maze-utils/src/background-request-proxy";
+import { chromeP } from "../../maze-utils/src/browserApi";
 import { getHash } from "../../maze-utils/src/hash";
 import Config from "../config/config";
 import { BloomFilterProcessed } from "../types/bloom.types";
@@ -7,7 +9,23 @@ import { SubmissionData } from "./dataFetching";
 import { logError } from "./logger";
 import * as murmurhash3js from "murmurhash3js";
 
+interface BloomFilterStored {
+    timeFetched: number;
+    timeGenerated: number;
+    lastUpdate: number;
+    numberOfHashes: number;
+    data: string;
+}
+let bloomCache: Record<string, BloomFilterStored> = {};
+let bloomCacheReady = false;
+
 export function setupBackgroundBloom() {
+    // import bloom data
+    chrome.storage.local.get("bloom", (d) => {
+        bloomCache = d.bloom;
+        bloomCacheReady = true;
+    });
+
     chrome.runtime.onMessage.addListener((request, sender, callback) => {
         if (request.message === "fetchSubmissions") {
             fetchSubmissions(request.contentID, request.profileID).then(callback).catch(logError);
@@ -87,9 +105,11 @@ function fetchSubmissions(contentID: string, profileID: string | null): Promise<
 
 const updateInterval = 1000 * 60 * 30;
 async function getBloomData(bloomID: number): Promise<BloomFilterProcessed | null> {
+    await waitFor(() => bloomCacheReady);
+
     try {
         // Check if one is stored
-        const storageCache = Config.local!.bloom[String(bloomID)];
+        const storageCache = bloomCache[String(bloomID)];
         if (storageCache && storageCache.lastUpdate > Date.now() - updateInterval) {
             const newBloom = {
                 timeFetched: storageCache.timeFetched,
@@ -174,15 +194,17 @@ function fetchBloom(bloomID: number): Promise<BloomFilterProcessed> {
     
             if (data.length > 0 && response.ok) {
                 arrayToDataUrl(data).then((data) => {
-                    Config.local!.bloom[String(bloomID)] = {
+                    bloomCache[String(bloomID)] = {
                         timeFetched: now,
                         timeGenerated: timeGenerated,
                         numberOfHashes: numberOfHashes,
                         data,
                         lastUpdate: now
                     };
-    
-                    Config.forceLocalUpdate("bloom");
+
+                    chromeP.storage.local.set({
+                        bloom: bloomCache
+                    }).catch(logError);
                 }).catch(logError);
     
                 resolve({
@@ -224,7 +246,7 @@ function updateBloom(bloomID: number): Promise<BloomFilterProcessed> {
             const timeGenerated = Number(new BigInt64Array(result.slice(1, 9))[0]);
             const diffData = new Uint32Array(result.slice(9));
 
-            const currentFilter = Config.local!.bloom[String(bloomID)];
+            const currentFilter = bloomCache[String(bloomID)];
             // If the number of hashes changes, or the initial generation of the filter changed, fetch again.
             // In normal operation, timeGenerated should always stay the same
             if (!currentFilter || currentFilter.numberOfHashes !== numberOfHashes
@@ -256,7 +278,7 @@ function updateBloom(bloomID: number): Promise<BloomFilterProcessed> {
             }
 
             arrayToDataUrl(data).then((data) => {
-                Config.local!.bloom[String(bloomID)] = {
+                bloomCache[String(bloomID)] = {
                     timeFetched: now,
                     timeGenerated: timeGenerated,
                     numberOfHashes: numberOfHashes,
@@ -264,7 +286,9 @@ function updateBloom(bloomID: number): Promise<BloomFilterProcessed> {
                     lastUpdate: now
                 };
 
-                Config.forceLocalUpdate("bloom");
+                chromeP.storage.local.set({
+                    bloom: bloomCache
+                }).catch(logError);
             }).catch(logError);
             
             const newFilter: BloomFilterProcessed = {

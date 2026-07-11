@@ -194,10 +194,11 @@ function setupOnUrlChange() {
     }
 
     // Record availability of Navigation API
-    void waitFor(() => Config.local !== null).then(() => {
-        if (Config.local!.navigationApiAvailable !== navigationApiAvailable) {
-            Config.local!.navigationApiAvailable = navigationApiAvailable;
-            Config.forceLocalUpdate("navigationApiAvailable");
+    chrome.storage.local.get("navigationApiAvailable", (v) => {
+        if (v.navigationApiAvailable !== navigationApiAvailable) {
+            void chrome.storage.local.set({
+                navigationApiAvailable
+            });
         }
     });
 }
