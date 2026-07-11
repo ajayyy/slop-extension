@@ -26,22 +26,22 @@ function getCurrentDomain(): string {
     return hostname.startsWith("www.") ? hostname.slice(4) : hostname;
 }
 
-export async function executeSelectorPattern(element: HTMLElement, pattern: SelectorPattern): Promise<string | null> {
+export async function executeSelectorPattern(element: HTMLElement, pattern: SelectorPattern, url?: URL): Promise<string | null> {
     switch (pattern.type) {
         case SelectorPatternType.urlParameter: {
-            const urlParams = new URLSearchParams(window.location.search);
+            const urlParams = new URLSearchParams((url ?? window.location).search);
             return urlParams.get(pattern.param);
         }
         case SelectorPatternType.pathIndex: {
-            const pathSegments = window.location.pathname.split("/");
+            const pathSegments = (url ?? window.location).pathname.split("/");
             return pathSegments[pattern.index] || null;
         }
         case SelectorPatternType.pathRegex: {
-            const match = window.location.pathname.match(pattern.selector);
+            const match = (url ?? window.location).pathname.match(pattern.selector);
             return match ? match[1] : null;
         }
         case SelectorPatternType.hrefRegex: {
-            const match = window.location.href.match(pattern.selector);
+            const match = (url ?? window.location).href.match(pattern.selector);
             return match ? match[1] : null;
         }
         case SelectorPatternType.cssSelector: {
@@ -62,10 +62,10 @@ export async function executeSelectorPattern(element: HTMLElement, pattern: Sele
             return result;
         }
         case SelectorPatternType.function: {
-            return pattern.get(window.location.href, element);
+            return pattern.get((url ?? window.location).href, element);
         }
         case SelectorPatternType.asyncFunction: {
-            return await pattern.get(window.location.href, element);
+            return await pattern.get((url ?? window.location).href, element);
         }
     }
 }
@@ -75,7 +75,7 @@ export function getSiteInfo(): SiteInfo | null {
 
     for (const siteInfo of siteInfoList) {
         if (siteInfo.domains.includes(domain)
-                || (siteInfo.siteChecker && siteInfo.siteChecker(window.location.href))) {
+            || (siteInfo.siteChecker && siteInfo.siteChecker(window.location.href))) {
             return siteInfo;
         }
     }
@@ -83,18 +83,18 @@ export function getSiteInfo(): SiteInfo | null {
     return null;
 }
 
-export async function getCurrentID(): Promise<string | null> {
+export async function getCurrentID(url?: URL): Promise<string | null> {
     const siteInfo = getSiteInfo();
     if (!siteInfo || (!("selectors" in siteInfo))) return null;
 
-    return await runAllSelectors(getCurrentElement(), siteInfo.selectors.contentId);
+    return await runAllSelectors(getCurrentElement(), siteInfo.selectors.contentId, url);
 }
 
-export async function getCurrentProfileID(): Promise<string | null> {
+export async function getCurrentProfileID(url?: URL): Promise<string | null> {
     const siteInfo = getSiteInfo();
     if (!siteInfo || siteInfo.type !== "social" || (!("selectors" in siteInfo))) return null;
 
-    return await runAllSelectors(getCurrentElement(), siteInfo.selectors.profileId);
+    return await runAllSelectors(getCurrentElement(), siteInfo.selectors.profileId, url);
 }
 
 export function getCurrentElement(): HTMLElement {
@@ -122,15 +122,15 @@ export function getProfileID(element: HTMLElement, selectors: SocialSelectors): 
     return runAllSelectors(element, selectors.profileId);
 }
 
-export async function runAllSelectors(element: HTMLElement, patterns: SelectorPattern[]): Promise<string | null> {
+export async function runAllSelectors(element: HTMLElement, patterns: SelectorPattern[], url?: URL): Promise<string | null> {
     for (const pattern of patterns) {
-        const result = await executeSelectorPattern(element, pattern);
-        
+        const result = await executeSelectorPattern(element, pattern, url);
+
         if (result) {
             return result;
         }
     }
-    
+
     return null;
 }
 
@@ -143,26 +143,26 @@ export function findButtonParent(buttonPlacements: ButtonPlacement[], element: H
                 baseElement = element.shadowRoot || await waitFor(() => element.shadowRoot);
                 if (baseElement === null) throw Error("No base element");
             }
-    
+
             const getElem = () => "selector" in placement
                 ? baseElement!.querySelector(placement.selector)
                 : placement.getElement(baseElement as HTMLElement);
-    
+
             let selectedElement = placement.wait
                 ? await waitFor(() => getElem())
                 : getElem();
-    
+
             // If another already found, use the first one
             if (found) throw Error("Already found, give up");
             found = true;
-    
+
             if (selectedElement) {
                 for (let i = 0; i < (placement.parent || 0); i++) {
                     if (selectedElement.parentElement) {
                         selectedElement = selectedElement.parentElement;
                     }
                 }
-    
+
                 if (selectedElement) {
                     return {
                         element: selectedElement as HTMLElement,

@@ -1,6 +1,5 @@
 import { waitFor } from "../../maze-utils/src";
 import { addCleanupListener } from "../../maze-utils/src/cleanup";
-import Config from "../config/config";
 import { ReportButton } from "../ui/reportButton";
 import { getSubmissions, isAIVote, isNegativeVote, SubmissionData } from "./dataFetching";
 import { log, logError } from "./logger";
@@ -42,9 +41,9 @@ export function initSiteHandler() {
     }
 }
 
-async function pageUrlChanged() {
+async function pageUrlChanged(url?: URL) {
     if (siteInfo && "selectors" in siteInfo) {
-        const nextId = await getCurrentID();
+        const nextId = await getCurrentID(url);
 
         const getElem = () => document.querySelector((siteInfo as BlogSiteInfoBase).selectors.elementCSSSelector);
         const element = siteInfo.selectors.wait
@@ -172,7 +171,7 @@ export function closeAllButtons(skippedButton?: ReportButton) {
 function setupOnUrlChange() {
     // Register listener for URL change via Navigation API
     const navigationApiAvailable = "navigation" in window;
-    const navigationListener = () => void (pageUrlChanged().catch(logError));
+    const navigationListener = (e) => void (pageUrlChanged(e.destination ? new URL(e.destination.url) : undefined).catch(logError));
     if (navigationApiAvailable) {
         (window as unknown as { navigation: EventTarget }).navigation.addEventListener("navigate", navigationListener);
 
