@@ -222,6 +222,7 @@ const OptionGroup = React.memo(function OptionGroup({ children, group, index, di
                         const text = e.clipboardData?.getData?.("text/plain")?.replace(/\n/g, " ") ?? "";
                         document.execCommand("insertText", false, text);
                     }}
+                    spellCheck={false}
                     contentEditable={true}>
             </div>
 
