@@ -2,12 +2,66 @@ import { waitFor } from "../../maze-utils/src";
 import { sendRealRequestToCustomServer } from "../../maze-utils/src/background-request-proxy";
 import { chromeP } from "../../maze-utils/src/browserApi";
 import { getHash } from "../../maze-utils/src/hash";
-import Config from "../config/config";
+import Config, { Category, LabelAction } from "../config/config";
 import { BloomFilterProcessed } from "../types/bloom.types";
 import { arrayToDataUrl, dataUrlToArray } from "./bloomFilterUtils";
 import { SubmissionData } from "./dataFetching";
 import { logError } from "./logger";
 import * as murmurhash3js from "murmurhash3js";
+
+enum BloomFilterID {
+    profileLeft = 11,
+    contentLeft = 1,
+    profileRightPositive = 12,
+    contentRightPositive = 2,
+    profileRightNegative = 13,
+    contentRightNegative = 3
+}
+
+interface BloomID {
+    profile: BloomFilterID;
+    content: BloomFilterID;
+}
+
+const leftBloomIds: BloomID = {
+    profile: BloomFilterID.profileLeft,
+    content: BloomFilterID.contentLeft,
+} as const;
+
+const rightPositiveBloomIds: BloomID = {
+    profile: BloomFilterID.profileRightPositive,
+    content: BloomFilterID.contentRightPositive,
+} as const;
+
+const rightNegativeBloomIds: BloomID = {
+    profile: BloomFilterID.profileRightNegative,
+    content: BloomFilterID.contentRightNegative,
+} as const;
+
+const bloomToCheck = {
+    [Category.AIScript]: leftBloomIds,
+    [Category.AIMusic]: leftBloomIds,
+    [Category.AIThumbnail]: leftBloomIds,
+    [Category.AIGraphicsMost]: leftBloomIds,
+    [Category.AIGraphicsLimited]: leftBloomIds,
+    [Category.AIGraphicsCommentary]: leftBloomIds,
+    [Category.TTSMostlyTTS]: leftBloomIds,
+    [Category.TTSMostlyHuman]: leftBloomIds,
+    [Category.TTSAI]: leftBloomIds,
+    [Category.AITopicNoExamples]: leftBloomIds,
+    [Category.AITopicExamples]: leftBloomIds,
+    [Category.Fiction]: leftBloomIds,
+
+    [Category.Funny]: rightPositiveBloomIds,
+    [Category.Entertaining]: rightPositiveBloomIds,
+    [Category.Creative]: rightPositiveBloomIds,
+    [Category.Informative]: rightPositiveBloomIds,
+
+    [Category.Boring]: rightNegativeBloomIds,
+    [Category.LowQuality]: rightNegativeBloomIds,
+    [Category.Misleading]: rightNegativeBloomIds,
+    [Category.Scam]: rightNegativeBloomIds,
+} as const;
 
 interface BloomFilterStored {
     timeFetched: number;
@@ -18,6 +72,7 @@ interface BloomFilterStored {
 }
 let bloomCache: Record<string, BloomFilterStored> = {};
 let bloomCacheReady = false;
+
 
 export function setupBackgroundBloom() {
     // import bloom data
@@ -133,12 +188,22 @@ async function getBloomData(bloomID: number): Promise<BloomFilterProcessed | nul
     }
 }
 
-export async function checkBloom(contentID: string, profileID: string | null): Promise<boolean> {
-    //todo: figure out which bloom to check based on settings
-    //todo: use profileID for profile based bloom
-    const contentBlooms = [2, 3, 4];
+function getActiveCategories() {
+    return Config.config!.labelConfig
+        .filter((a) => a.action !== LabelAction.Nothing)
+        .flatMap((a) => a.categories);
+}
 
-    for (const bloomID of contentBlooms) {
+function getBloomsToCheck(): BloomID[] {
+    return [...new Set(getActiveCategories()
+        .map((cat) => bloomToCheck[cat]))];
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function checkBloom(contentID: string, profileID: string | null): Promise<boolean> {
+    const bloomsToCheck = getBloomsToCheck();
+
+    for (const bloomID of bloomsToCheck.map((b) => b.content)) {
         const bloom = await getBloomData(bloomID);
         if (bloom) {
             const hashes = hashContent(contentID, bloom.numberOfHashes, bloom.data.length * 8);
@@ -165,7 +230,7 @@ export async function checkBloom(contentID: string, profileID: string | null): P
 
     return false;
 
-    //todo: then do it again but hash profile id instead
+    // todo: in future have a configuration option that will check based on profile
 }
 
 function hashContent(data: string, numberOfHashes: number, bloomSize: number): number[] {

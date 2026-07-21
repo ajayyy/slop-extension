@@ -4,6 +4,8 @@
   "description": "",
   "main": "background.js",
   "dependencies": {
+    "@dnd-kit/helpers": "^0.5.0",
+    "@dnd-kit/react": "^0.5.0",
     "cld3-asm": "^3.1.1",
     "murmurhash3js": "^3.0.1",
     "react": "^18.2.0",

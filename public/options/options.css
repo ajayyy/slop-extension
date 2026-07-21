@@ -8,10 +8,10 @@
     --dialog-background: #181818;
     --dialog-border: white;
     --tab-color: #242424;
-    --tab-button-hover: #07375d;
+    --tab-button-hover: rgb(69, 31, 16);
     --tab-hover: white;
     --description: #dfdfdf;
-    --disabled: #080052;
+    --disabled: rgb(69, 31, 16);
     --slider: #707070;
     --title: #dad8d8;
     --border-color: #484848;
@@ -42,7 +42,7 @@
     color: var(--white);
 }
 
-.small-description, p, li, span, div {
+.small-description, body {
     color: var(--description);
 }
 
@@ -107,12 +107,12 @@ html, body {
 }
 
 .tab-heading.selected {
-    background-color: #0a62a5;
+    background-color: rgb(208, 94, 49);
     color: white;
 }
 
 .tab-heading:active {
-    background-color: #0a62a5;
+    background-color: rgb(184, 82, 41);
     color: white;
 }
 
@@ -307,7 +307,7 @@ input[type='number'] {
 .option-button {
     cursor: pointer;
 
-    background-color: #0e79ca;
+    background-color: rgb(208, 94, 49);
     padding: 10px;
     color: white;
     border-radius: 5px;
@@ -317,7 +317,7 @@ input[type='number'] {
 }
 
 .option-button:hover:not(.disabled) {
-    background-color: #0e79ca;
+    background-color: rgb(152, 68, 34);
 }
 
 .option-button.disabled {
@@ -594,16 +594,6 @@ svg {
     padding-bottom: 15px;
 }
 
-.sb-optionsSelector {
-    background-color: #0e79ca;
-    color: white;
-    
-    border: none;
-    font-size: 14px;
-    padding: 5px;
-    border-radius: 5px;
-}
-
 .categoryColorTextBox {
     width: 60px;
 
@@ -801,4 +791,95 @@ svg {
 
 .extra-top-padding {
     padding-top: 20px;
+}
+
+.labelOptionsContainer {
+    display: flex;
+    gap: 20px;
+    margin: 20px;
+}
+
+.labelOptionGroup {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    
+    height: fit-content;
+    margin-top: 10px;
+}
+
+.labelOptionGroupContainer {
+    width: 300px;
+
+    padding: 15px;
+    background-color: #b1b1b120;
+    border-color: #b1b1b1;
+    backdrop-filter: blur(10px);
+    border-width: 3px;
+    border-style: solid;
+    border-radius: 10px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+
+    color: white;
+}
+
+.labelOptionGroupContainer.doNothingOptionGroup {
+    width: fit-content;
+}
+
+.labelOption {
+    padding: 10px;
+    padding-right: 5px;
+    background: #a05233;
+    color: white;
+    border-radius: 10px;
+    height: fit-content;
+
+    display: flex;
+    align-items: center;
+}
+
+.labelOption[aria-hidden] {
+    opacity: 0.4;
+}
+
+.dragging:not([aria-hidden]) {
+    transform: scale(1.05) !important;
+    box-shadow: 8.0px 16.0px 16.0px hsl(0deg 0% 0% / 0.25);
+}
+
+.labelOptionName {
+    margin-right: 5px;
+}
+
+.handle {
+    display: flex;
+    align-items: center;
+    cursor: grab;
+}
+
+.handle:active {
+  cursor: grabbing;
+}
+
+.labelOptionGroupTitle {
+    font-size: 25px;
+}
+
+.labelOptionGroupActionContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.labelOptionGroupAction {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
 }
