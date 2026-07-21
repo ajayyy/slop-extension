@@ -1,7 +1,7 @@
 {
-    "name": "__MSG_deArrowFullName__",
-    "short_name": "DeArrow",
-    "version": "2.1.11",
+    "name": "__MSG_noMoreSlopFullName__",
+    "short_name": "NoMoreSlop",
+    "version": "0.1",
     "default_locale": "en",
     "description": "__MSG_deArrowDescription__",
     "homepage_url": "https://dearrow.ajay.app",

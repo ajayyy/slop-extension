@@ -8,7 +8,7 @@ export const PopupComponent = () => {
     return (
         <>
             <header className="sbPopupLogo">
-                <img src="icons/logo.svg" alt="DeArrow Logo" width="40" height="40" id="dearrowPopupLogo"/>
+                <img src="icons/logo.svg" alt="NoMoreSlop Logo" width="40" height="40" id="dearrowPopupLogo"/>
                 <p className="u-mZ">
                     NoMoreSlop
                 </p>

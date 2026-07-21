@@ -61,7 +61,7 @@
         "run_at": "document_start"
     }],
     "action": {
-        "default_title": "DeArrow",
+        "default_title": "NoMoreSlop",
         "default_popup": "popup.html",
         "default_icon": {
             "16": "icons/logo-16.png",
