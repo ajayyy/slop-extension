@@ -5,7 +5,7 @@
     --sb-grey-bg-color: #333;
     --sb-grey-fg-color: #999;
     --sb-red-bg-color: #cc1717;
-    --cb-switch-color: #0e79ca;
+    --cb-switch-color: rgb(208, 94, 49);
 
     /* Options */
     --color-scheme: dark;

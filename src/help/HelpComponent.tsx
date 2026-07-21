@@ -8,7 +8,7 @@ export const HelpComponent = () => {
             <div id="title">
                 <img src="icons/logo-256.png" height="80" className="profilepic" />
                 <span id="titleText">
-                    Slop extension alpha
+                    NoMoreSlop
                 </span>
             </div>
 
@@ -17,6 +17,14 @@ export const HelpComponent = () => {
                 <p className="createdBy">
                     <img src="https://ajay.app/newprofilepic.jpg" height="30" className="profilepiccircle" />
                     {chrome.i18n.getMessage("createdBy")}{" "}<a href="https://ajay.app">Ajay Ramachandran</a>
+                </p>
+
+                <p>
+                    Welcome to the ALPHA ALPHA ALPHA slop test slop
+                </p>
+
+                <p>
+                    Please leave feedback at <a href="https://discord.gg/SponsorBlock">https://discord.gg/SponsorBlock</a>
                 </p>
 
                 <p>
@@ -42,19 +50,12 @@ export const HelpComponent = () => {
                 <iframe className="optionsFrame" src="../options/options.html#embed" style={{border: "none"}}></iframe>
 
                 <h1>
-                    {chrome.i18n.getMessage("howItWorks")}
-                </h1>
-
-                <p>
-                    Please see <a href="https://dearrow.ajay.app" target="_blank" rel="noreferrer">https://dearrow.ajay.app</a> for more information.
-                </p>
-
-                <h1>
                     {chrome.i18n.getMessage("Credits")}
                 </h1>
 
                 <p>
-                    Thanks to all <a href="https://github.com/ajayyy/DeArrow/graphs/contributors" target="_blank" rel="noreferrer">DeArrow contributors</a>,{" "}
+                    Thanks to all <a href="https://github.com/ajayyy/slop-extension/graphs/contributors" target="_blank" rel="noreferrer">NoMoreSlop contributors</a>,{" "}
+                    <a href="https://github.com/ajayyy/DeArrow/graphs/contributors" target="_blank" rel="noreferrer">DeArrow contributors</a>,{" "}
                     <a href="https://github.com/ajayyy/SponsorBlock/graphs/contributors" target="_blank" rel="noreferrer">SponsorBlock contributors</a>,{" "}
                     <a href="https://github.com/ajayyy/SponsorBlockServer/graphs/contributors" target="_blank" rel="noreferrer">SponsorBlockServer contributors</a> and{" "}
                     <a href="https://github.com/ajayyy/SponsorBlockSite/graphs/contributors" target="_blank" rel="noreferrer">SponsorBlockSite contributors</a> such{" "}
