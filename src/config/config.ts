@@ -106,7 +106,7 @@ const syncDefaults = {
     labelConfig: [{
         name: chrome.i18n.getMessage("slopAIGroup"),
         action: LabelAction.Color,
-        color: "#ff8151",
+        color: "#F4900C",
         categories: [
             Category.AIScript,
             Category.AIMusic,
@@ -117,9 +117,19 @@ const syncDefaults = {
             Category.TTSAI
         ]
     }, {
+        name: chrome.i18n.getMessage("slopGoodGroup"),
+        action: LabelAction.Bar,
+        color: "#78B059",
+        categories: [
+            Category.Funny,
+            Category.Entertaining,
+            Category.Creative,
+            Category.Informative
+        ]
+    }, {
         name: chrome.i18n.getMessage("slopBadGroup"),
-        action: LabelAction.Color,
-        color: "#4a3687",
+        action: LabelAction.Bar,
+        color: "#AB8ED8",
         categories: [
             Category.Boring,
             Category.LowQuality,
@@ -128,7 +138,7 @@ const syncDefaults = {
     }, {
         name: chrome.i18n.getMessage("slopScamGroup"),
         action: LabelAction.Color,
-        color: "#ff0000",
+        color: "#DD2E44",
         categories: [
             Category.Scam,
         ]

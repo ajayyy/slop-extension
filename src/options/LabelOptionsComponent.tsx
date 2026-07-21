@@ -36,6 +36,9 @@ const validActions: SelectOption[] = [{
 }, {
     value: LabelAction.Color,
     label: chrome.i18n.getMessage("slopColorOverlayAction")
+}, {
+    value: LabelAction.Bar,
+    label: chrome.i18n.getMessage("slopBarAction")
 }];
 
 interface Group {
@@ -242,7 +245,7 @@ const OptionGroup = React.memo(function OptionGroup({ children, group, index, di
                 </div>
 
                 {
-                    group.action === LabelAction.Color &&
+                    [LabelAction.Color, LabelAction.Bar].includes(group.action) &&
                     <input
                         type="color"
                         value={group.color}
