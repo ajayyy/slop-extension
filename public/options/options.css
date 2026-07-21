@@ -809,7 +809,7 @@ svg {
 }
 
 .labelOptionGroupContainer {
-    width: 300px;
+    width: 200px;
 
     padding: 15px;
     background-color: #b1b1b120;
@@ -828,7 +828,7 @@ svg {
 }
 
 .labelOptionGroupContainer.doNothingOptionGroup {
-    width: fit-content;
+    width: 100%;
 }
 
 .labelOption {
