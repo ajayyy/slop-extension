@@ -900,20 +900,32 @@ ytd-playlist-video-thumbnail-renderer {
     position: relative;
 }
 
-[slTintedPost="1"]::before {
+[slTintedPost="1"]::before, [slColorBarPost="1"]::after {
     content: "";
     position: absolute;
     inset: 0;
-    /* background-color: rgba(255, 129, 81, var(--slTintedPostOpacity, 0)); */
-    background-color: rgba(0, 255, 0, var(--slTintedPostOpacity, 0));
-    /* background-color: rgba(21, 29, 40, var(--slTintedPostOpacity, 0)); */
+    
+    opacity: 1;
     z-index: 1000;
-    transition: background-color 0.3s;
+    transition: opacity 0.3s;
 
     pointer-events: none;
 }
 
-[slTintedPost="1"]:hover::before {
-    background-color: transparent;
-    transition: background-color 0.3s;
+[slTintedPost="1"]::before {
+    background: var(--slTintedPostFilter);
+
+    border-radius: 8px;
+}
+
+[slColorBarPost="1"]::after {
+    background: var(--slColorBarFilter);
+
+    top: calc(100% - 8px);
+    border-radius: 0 0 8px 8px;
+}
+
+[slTintedPost="1"]:hover::before, [slColorBarPost="1"]:hover::after {
+    opacity: 0;
+    transition: opacity 0.3s;
 }

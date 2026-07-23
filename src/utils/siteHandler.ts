@@ -1,7 +1,8 @@
 import { waitFor } from "../../maze-utils/src";
 import { addCleanupListener } from "../../maze-utils/src/cleanup";
+import Config, { Category, LabelAction } from "../config/config";
 import { ReportButton } from "../ui/reportButton";
-import { getSubmissions, isAIVote, isNegativeVote, SubmissionData } from "./dataFetching";
+import { getSubmissions, SubmissionData } from "./dataFetching";
 import { log, logError } from "./logger";
 import { findButtonParent, getContentID, getCurrentID, getProfileID, getSiteInfo } from "./siteInfo";
 import { BlogSiteInfoBase, SiteInfo, SiteSelectors, SocialSelectors } from "./siteInfo.types";
@@ -129,35 +130,95 @@ async function onPostFound(element: HTMLElement, selectors: SiteSelectors | Soci
 
     if (contentID) {
         existingVotesPromise.then((existingVotes) => {
-            tintPost(element, existingVotes);
+            actionOnPost(element, existingVotes);
         }).catch(logError);
     }
 }
 
-function tintPost(element: HTMLElement, existingVotes: SubmissionData) {
-    //todo: treat "all human" votes as downvotes
+interface LabelColor {
+    color: string;
+    count: number;
+}
+
+function actionOnPost(element: HTMLElement, existingVotes: SubmissionData) {
+    // Normalize votes by removing all human votes
+    const humanVotes = existingVotes.content.find((v) => v.id === "human")?.votes;
+    if (humanVotes && humanVotes > 0) {
+        for (const vote of existingVotes.content) {
+            vote.votes -= humanVotes;
+        }
+    }
+
     //todo: handle profile votes in some way
-    for (const vote of existingVotes.content.sort((a, b) => (b.votes) - (a.votes))) {
-        const votes = vote.votes;
-        if (votes > 0) {
-            if (isAIVote(vote)) {
-                //todo: combine multiple ai votes to get poweer of tint (average?)
-                // const sumOfAiVotes = existingVotes.reduce((sum, v) => isAIVote(v) ? sum + (v.upvotes - v.downvotes) : sum, 0);
-                //todo: use that
-                console.log(votes, Math.sqrt(votes));
-                element.setAttribute("slTintedPost", "1");
-                element.style.setProperty("--slTintedPostOpacity", String(Math.min(0.4, 0.08 * Math.sqrt(votes))));
-                return;
-            } else if (isNegativeVote(vote)) {
-                //todo: use different color
-                element.setAttribute("slTintedPost", "1");
-                element.style.setProperty("--slTintedPostOpacity", String(Math.min(0.4, 0.08 * Math.sqrt(votes))));
-                return;
+    const labelColors: LabelColor[] = [];
+    const barColors: LabelColor[] = [];
+    for (const group of Config.config!.labelConfig) {
+        if ([LabelAction.Color, LabelAction.Bar].includes(group.action)) {
+            const validVotes = existingVotes.content.filter((v) => v.votes > 0 && group.categories.includes(v.id as Category));
+            if (validVotes.length > 0) {
+                const averageVotes = validVotes.reduce((acc, v) => v.votes + acc, 0) / validVotes.length;
+
+                if (group.action === LabelAction.Color) {
+                    labelColors.push({
+                        color: group.color,
+                        count: averageVotes
+                    });
+                } else if (group.action === LabelAction.Bar) {
+                    barColors.push({
+                        color: group.color,
+                        count: averageVotes
+                    });
+                }
             }
         }
     }
 
-    element.removeAttribute("slTintedPost");
+    // Color label
+    if (labelColors.length > 0) {
+        const totalLabelCount = labelColors.reduce((acc, l) => acc + l.count, 0);
+        let labelCursor = 0;
+        let filter = "linear-gradient(90deg";
+        const defaultGradientSize = 0.05;
+
+        for (const labelColor of labelColors) {
+            const tooSmallForGradient = (labelColor.count / totalLabelCount) < defaultGradientSize * 2;
+            const gradientSize = tooSmallForGradient ? 0 : defaultGradientSize;
+            const currentPercent = labelCursor / totalLabelCount + gradientSize;
+            const nextPercentage = (labelCursor + labelColor.count) / totalLabelCount - gradientSize;
+
+            //todo: set the alpha here appropriately via adding hex to colour
+            filter += `,${labelColor.color}30 ${currentPercent * 100}% ${(nextPercentage) * 100}%`;
+
+            labelCursor += labelColor.count;
+        }
+
+        element.setAttribute("slTintedPost", "1");
+        element.style.setProperty("--slTintedPostFilter", filter);
+    } else {
+        element.removeAttribute("slTintedPost");
+    }
+
+    // Color bar
+    if (barColors.length > 0) {
+        const totalCount = barColors.reduce((acc, l) => acc + l.count, 0);
+        let labelCursor = 0;
+        let filter = "linear-gradient(90deg";
+
+        for (const color of barColors) {
+            const currentPercent = labelCursor / totalCount;
+            const nextPercentage = (labelCursor + color.count) / totalCount;
+
+            //todo: set the alpha here appropriately via adding hex to colour
+            filter += `,${color.color}80 ${currentPercent * 100}% ${(nextPercentage) * 100}%`;
+
+            labelCursor += color.count;
+        }
+
+        element.setAttribute("slColorBarPost", "1");
+        element.style.setProperty("--slColorBarFilter", filter);
+    } else {
+        element.removeAttribute("slColorBarPost");
+    }
 }
 
 export function closeAllButtons(skippedButton?: ReportButton) {
