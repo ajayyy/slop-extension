@@ -32,10 +32,10 @@ export type SelectorPattern = {
     postProcessor?: (value: string) => string;
 } | {
     type: SelectorPatternType.function;
-    get: (url: string, element: HTMLElement) => string | null;
+    get: (url: URL, element: HTMLElement) => string | null;
 } | {
     type: SelectorPatternType.asyncFunction;
-    get: (url: string, element: HTMLElement) => Promise<string | null>;
+    get: (url: URL, element: HTMLElement) => Promise<string | null>;
 };
 
 export enum PlacementPosition {
@@ -92,6 +92,7 @@ export type SocialBrowsePageFinder = BaseBrowsePageFinder & SocialSelectors;
 
 export interface SiteInfoBase {
     domains: (string)[];
+    idPrefix?: string;
     siteChecker?: (url: string) => boolean;
     type: SiteType;
 }

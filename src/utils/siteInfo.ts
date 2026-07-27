@@ -21,27 +21,31 @@ const siteInfoList: SiteInfo[] = [
     BlogSiteInfo
 ];
 
-function getCurrentDomain(): string {
-    const hostname = window.location.hostname;
+function getDomain(url: { hostname: string }): string {
+    const hostname = url.hostname;
     return hostname.startsWith("www.") ? hostname.slice(4) : hostname;
 }
 
-export async function executeSelectorPattern(element: HTMLElement, pattern: SelectorPattern, url?: URL): Promise<string | null> {
+function getCurrentDomain(): string {
+    return getDomain(window.location);
+}
+
+export async function executeSelectorPattern(element: HTMLElement, pattern: SelectorPattern, url: URL): Promise<string | null> {
     switch (pattern.type) {
         case SelectorPatternType.urlParameter: {
-            const urlParams = new URLSearchParams((url ?? window.location).search);
+            const urlParams = new URLSearchParams(url.search);
             return urlParams.get(pattern.param);
         }
         case SelectorPatternType.pathIndex: {
-            const pathSegments = (url ?? window.location).pathname.split("/");
+            const pathSegments = url.pathname.split("/");
             return pathSegments[pattern.index] || null;
         }
         case SelectorPatternType.pathRegex: {
-            const match = (url ?? window.location).pathname.match(pattern.selector);
+            const match = url.pathname.match(pattern.selector);
             return match ? match[1] : null;
         }
         case SelectorPatternType.hrefRegex: {
-            const match = (url ?? window.location).href.match(pattern.selector);
+            const match = url.href.match(pattern.selector);
             return match ? match[1] : null;
         }
         case SelectorPatternType.cssSelector: {
@@ -62,10 +66,10 @@ export async function executeSelectorPattern(element: HTMLElement, pattern: Sele
             return result;
         }
         case SelectorPatternType.function: {
-            return pattern.get((url ?? window.location).href, element);
+            return pattern.get(url, element);
         }
         case SelectorPatternType.asyncFunction: {
-            return await pattern.get((url ?? window.location).href, element);
+            return await pattern.get(url, element);
         }
     }
 }
@@ -83,14 +87,14 @@ export function getSiteInfo(): SiteInfo | null {
     return null;
 }
 
-export async function getCurrentID(url?: URL): Promise<string | null> {
+export async function getCurrentID(url: URL): Promise<string | null> {
     const siteInfo = getSiteInfo();
     if (!siteInfo || (!("selectors" in siteInfo))) return null;
 
-    return await runAllSelectors(getCurrentElement(), siteInfo.selectors.contentId, url);
+    return await getContentID(getCurrentElement(), siteInfo, siteInfo.selectors, url);
 }
 
-export async function getCurrentProfileID(url?: URL): Promise<string | null> {
+export async function getCurrentProfileID(url: URL): Promise<string | null> {
     const siteInfo = getSiteInfo();
     if (!siteInfo || siteInfo.type !== "social" || (!("selectors" in siteInfo))) return null;
 
@@ -114,15 +118,20 @@ export function getCurrentElement(): HTMLElement {
 }
 
 
-export function getContentID(element: HTMLElement, selectors: SiteSelectors): Promise<string | null> {
-    return runAllSelectors(element, selectors.contentId);
+export async function getContentID(element: HTMLElement, siteInfo: SiteInfo, selectors: SiteSelectors, url: URL): Promise<string | null> {
+    const result = await runAllSelectors(element, selectors.contentId, url);
+    if (result) {
+        return `${siteInfo.idPrefix ?? getDomain(url)}-${result}`
+    } else {
+        return null;
+    }
 }
 
-export function getProfileID(element: HTMLElement, selectors: SocialSelectors): Promise<string | null> {
-    return runAllSelectors(element, selectors.profileId);
+export function getProfileID(element: HTMLElement, selectors: SocialSelectors, url: URL): Promise<string | null> {
+    return runAllSelectors(element, selectors.profileId, url);
 }
 
-export async function runAllSelectors(element: HTMLElement, patterns: SelectorPattern[], url?: URL): Promise<string | null> {
+export async function runAllSelectors(element: HTMLElement, patterns: SelectorPattern[], url: URL): Promise<string | null> {
     for (const pattern of patterns) {
         const result = await executeSelectorPattern(element, pattern, url);
 

@@ -7,6 +7,7 @@ const profileIdPattern = "/([^/]+)/status/";
 
 export const TwitterSiteInfo: SiteInfo = {
     domains: ["x.com", "twitter.com"],
+    idPrefix: "x.com",
     type: SiteType.social,
     browsePageFinder: {
         elementCSSSelector: `article[data-testid="tweet"]`,

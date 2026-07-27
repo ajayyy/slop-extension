@@ -17,6 +17,7 @@ const contentIdPattern: SelectorPattern = {
 
 export const YouTubeSiteInfo: SiteInfo = {
     domains: ["youtube.com", "youtube-nocookie.com"],
+    idPrefix: "youtube.com",
     type: SiteType.social,
     selectors: {
         contentId: [{
@@ -48,8 +49,8 @@ export const YouTubeSiteInfo: SiteInfo = {
     }
 };
 
-async function getProfileID(url: string, element: HTMLElement): Promise<string | null> {
-    const videoID = await executeSelectorPattern(element, contentIdPattern) as VideoID | null;
+async function getProfileID(url: URL, element: HTMLElement): Promise<string | null> {
+    const videoID = await executeSelectorPattern(element, contentIdPattern, url) as VideoID | null;
     if (videoID) {
         return await getChannelHandleFromVideo(videoID) || null;
     }
@@ -57,8 +58,8 @@ async function getProfileID(url: string, element: HTMLElement): Promise<string |
     return null;
 }
 
-async function getProfileIDByUrl(url: string): Promise<string | null> {
-    const videoID = url.match(contentIdRegex)?.[1] as VideoID | null;
+async function getProfileIDByUrl(url: URL): Promise<string | null> {
+    const videoID = url.href.match(contentIdRegex)?.[1] as VideoID | null;
     if (videoID) {
         return await getChannelHandleFromVideo(videoID) || null;
     }

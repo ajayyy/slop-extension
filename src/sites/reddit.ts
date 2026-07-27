@@ -6,6 +6,7 @@ const contentIdPattern = "/comments/([0-9a-z]+)/";
 export const RedditSiteInfo: SiteInfo = {
     // todo: support all old reddit domains need asterisk support
     domains: ["reddit.com", "old.reddit.com"],
+    idPrefix: "reddit.com",
     type: SiteType.social,
     browsePageFinder: {
         // new, old

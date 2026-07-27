@@ -5,6 +5,7 @@ const profileIdPattern = "/([^/]+)/post/";
 
 export const BskySiteInfo: SiteInfo = {
     domains: ["bsky.app"],
+    idPrefix: "bsky.app",
     siteChecker: () => {
         return !!document.querySelector(`meta[name="generator"][content="bskyweb"]`);
     },

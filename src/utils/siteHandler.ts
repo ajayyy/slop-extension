@@ -2,7 +2,7 @@ import { waitFor } from "../../maze-utils/src";
 import { addCleanupListener } from "../../maze-utils/src/cleanup";
 import Config, { Category, LabelAction } from "../config/config";
 import { ReportButton } from "../ui/reportButton";
-import { getSubmissions, SubmissionData } from "./dataFetching";
+import { getSubmissions, isAIVote, SubmissionData } from "./dataFetching";
 import { log, logError } from "./logger";
 import { findButtonParent, getContentID, getCurrentID, getProfileID, getSiteInfo } from "./siteInfo";
 import { BlogSiteInfoBase, SiteInfo, SiteSelectors, SocialSelectors } from "./siteInfo.types";
@@ -28,7 +28,7 @@ export function initSiteHandler() {
         if (siteInfo.browsePageFinder) {
             const elements = Array.from(document.querySelectorAll(siteInfo.browsePageFinder.elementCSSSelector));
             for (const element of elements) {
-                onPostFound(element as HTMLElement, siteInfo.browsePageFinder).catch(logError);
+                onPostFound(element as HTMLElement, siteInfo, siteInfo.browsePageFinder, ).catch(logError);
             }
 
             if (!siteInfo.browsePageFinder.dontListenForNewElements) {
@@ -37,12 +37,12 @@ export function initSiteHandler() {
             }
         }
 
-        pageUrlChanged().catch(logError);
+        pageUrlChanged(new URL(window.location.href)).catch(logError);
         setupOnUrlChange();
     }
 }
 
-async function pageUrlChanged(url?: URL) {
+async function pageUrlChanged(url: URL) {
     if (siteInfo && "selectors" in siteInfo) {
         const nextId = await getCurrentID(url);
 
@@ -51,7 +51,7 @@ async function pageUrlChanged(url?: URL) {
             ? await waitFor(() => getElem())
             : getElem();
         if (element && nextId) {
-            await onPostFound(element as HTMLElement, siteInfo.selectors);
+            await onPostFound(element as HTMLElement, siteInfo, siteInfo.selectors);
         }
     }
 }
@@ -77,7 +77,7 @@ function onMutation(mutations: MutationRecord[]) {
                             if (button.element === element) continue;
                         }
 
-                        onPostFound(element, siteInfo.browsePageFinder).catch(logError);
+                        onPostFound(element, siteInfo, siteInfo.browsePageFinder).catch(logError);
                     }
                 }
             }
@@ -85,9 +85,10 @@ function onMutation(mutations: MutationRecord[]) {
     }
 }
 
-async function onPostFound(element: HTMLElement, selectors: SiteSelectors | SocialSelectors) {
-    const contentID = await getContentID(element, selectors);
-    const profileID = "profileId" in selectors ? await getProfileID(element, selectors) : null;
+async function onPostFound(element: HTMLElement, siteInfo: SiteInfo, selectors: SiteSelectors | SocialSelectors) {
+    const url = new URL(window.location.href);
+    const contentID = await getContentID(element, siteInfo, selectors, url);
+    const profileID = "profileId" in selectors ? await getProfileID(element, selectors, url) : null;
 
     let createdButton = createdButtons.find(b => b.element === element);
     if (!createdButton) {
@@ -232,7 +233,7 @@ export function closeAllButtons(skippedButton?: ReportButton) {
 function setupOnUrlChange() {
     // Register listener for URL change via Navigation API
     const navigationApiAvailable = "navigation" in window;
-    const navigationListener = (e) => void (pageUrlChanged(e.destination ? new URL(e.destination.url) : undefined).catch(logError));
+    const navigationListener = (e) => void (pageUrlChanged(new URL(e.destination.url)).catch(logError));
     if (navigationApiAvailable) {
         (window as unknown as { navigation: EventTarget }).navigation.addEventListener("navigate", navigationListener);
 
@@ -242,7 +243,7 @@ function setupOnUrlChange() {
     } else {
         chrome.runtime.onMessage.addListener((request) => {
             if (request.message === "update") {
-                pageUrlChanged().catch(logError);
+                pageUrlChanged(new URL(window.location.href)).catch(logError);
             }
         });
     }

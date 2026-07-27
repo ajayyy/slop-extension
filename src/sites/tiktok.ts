@@ -5,6 +5,7 @@ const profileIdPattern = "/([^/]+)/video/";
 
 export const TikTokSiteInfo: SiteInfo = {
     domains: ["tiktok.com"],
+    idPrefix: "tiktok.com",
     type: SiteType.social,
     selectors: {
         contentId: [{

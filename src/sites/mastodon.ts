@@ -3,6 +3,7 @@ import { SelectorPatternType, SiteInfo, SiteType } from "../utils/siteInfo.types
 
 export const MastodonSiteInfo: SiteInfo = {
     domains: [],
+    idPrefix: "mastodon.social",
     siteChecker: () => {
         return !!document.querySelector("#mastodon.app-holder");
     },
