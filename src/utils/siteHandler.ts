@@ -146,7 +146,9 @@ function actionOnPost(element: HTMLElement, existingVotes: SubmissionData) {
     const humanVotes = existingVotes.content.find((v) => v.id === "human")?.votes;
     if (humanVotes && humanVotes > 0) {
         for (const vote of existingVotes.content) {
-            vote.votes -= humanVotes;
+            if (isAIVote(vote)) {
+                vote.votes -= humanVotes;
+            }
         }
     }
 
@@ -187,8 +189,8 @@ function actionOnPost(element: HTMLElement, existingVotes: SubmissionData) {
             const currentPercent = labelCursor / totalLabelCount + gradientSize;
             const nextPercentage = (labelCursor + labelColor.count) / totalLabelCount - gradientSize;
 
-            //todo: set the alpha here appropriately via adding hex to colour
-            filter += `,${labelColor.color}30 ${currentPercent * 100}% ${(nextPercentage) * 100}%`;
+            const brightness = Math.round((Math.max(0, Math.min(1, labelColor.count / Config.config!.votesForMaxBrightness)) * 255)).toString(16);
+            filter += `,${labelColor.color}${brightness} ${currentPercent * 100}% ${(nextPercentage) * 100}%`;
 
             labelCursor += labelColor.count;
         }
@@ -209,8 +211,8 @@ function actionOnPost(element: HTMLElement, existingVotes: SubmissionData) {
             const currentPercent = labelCursor / totalCount;
             const nextPercentage = (labelCursor + color.count) / totalCount;
 
-            //todo: set the alpha here appropriately via adding hex to colour
-            filter += `,${color.color}80 ${currentPercent * 100}% ${(nextPercentage) * 100}%`;
+            const brightness = (Math.max(0, Math.min(1, color.count / Config.config!.votesForMaxBrightness)) * 255).toString(16);
+            filter += `,${color.color}${brightness} ${currentPercent * 100}% ${(nextPercentage) * 100}%`;
 
             labelCursor += color.count;
         }

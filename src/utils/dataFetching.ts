@@ -1,15 +1,15 @@
 import { extensionUserAgent } from "../../maze-utils/src";
-import Config from "../config/config";
+import Config, { Category } from "../config/config";
 import { sendRequestToServer } from "./requests";
 
 export interface VoteInfo {
-    id: string;
+    id: Category;
     votes: number;
     profileID?: string;
 }
 
 export interface ProfileVoteInfo {
-    id: string;
+    id: Category;
     votes: number;
     voteSum: number;
 }
@@ -36,23 +36,20 @@ const cacheLimit = 10000;
 // todo: should this be configurable?
 // todo: put ai-topic somewhere, but not by default as bad
 const aiVoteIDs = [
-    "tts",
-    "ai-script",
-    "ai-music",
-    "clip-mashup"
-];
-const negativeVoteIDs = [
-    "boring",
-    "low-quality",
-    "misleading"
+    Category.AIScript,
+    Category.AIMusic,
+    Category.AIThumbnail,
+    Category.AIGraphicsMost,
+    Category.AIGraphicsLimited,
+    Category.AIGraphicsCommentary,
+    Category.TTSMostlyTTS,
+    Category.TTSMostlyHuman,
+    Category.TTSAI,
+    Category.AITopicExamples
 ];
 
 export function isAIVote(submission: VoteInfo): boolean {
     return aiVoteIDs.includes(submission.id);
-}
-
-export function isNegativeVote(submission: VoteInfo): boolean {
-    return negativeVoteIDs.includes(submission.id);
 }
 
 export async function getSubmissions(contentID: string, profileID: string | null): Promise<SubmissionData> {
@@ -105,6 +102,7 @@ export async function submitVote(contentID: string, profileID: string | null, da
         votes: data.votes,
         comment: data.comment,
         rating: data.rating,
+        wholeProfile: false,
         userAgent: extensionUserAgent()
     });
 
@@ -112,11 +110,6 @@ export async function submitVote(contentID: string, profileID: string | null, da
 
     return result;
 }
-
-// function getSubmissionsForYT(videoID: VideoID): Promise<SubmissionData> {
-//     //todo:
-//     return Promise.resolve({} as SubmissionData);
-// }
 
 export function clearCache(contentID: string, profileID: string | null) {
     delete cache[getCacheKey(contentID, profileID)];

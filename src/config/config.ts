@@ -65,6 +65,7 @@ interface SBConfig {
     importedConfig: boolean;
     invidiousInstances: string[];
     labelConfig: LabelConfig[];
+    votesForMaxBrightness: number;
     serverAddress: string | null;
     extensionEnabled: boolean;
     lastIncognitoStatus: boolean;
@@ -143,6 +144,7 @@ const syncDefaults = {
             Category.Scam,
         ]
     }] as LabelConfig[],
+    votesForMaxBrightness: 5,
     serverAddress: CompileConfig.serverAddress,
     extensionEnabled: true,
     lastIncognitoStatus: false,
