@@ -1,80 +1,79 @@
 import * as React from "react";
 import { SubmissionData, ToSubmitData } from "../utils/dataFetching";
+import { Category } from "../config/config";
 
 interface VoteType {
-    id: string;
-    key: string;
-    textKey?: string;
+    id: Category;
     videoOnly?: boolean;
     notAi?: boolean;
     type?: number; // to restrict contradicting votes
 }
 
 const slopVoteTypes: VoteType[] = [{
-    id: "tts",
-    key: "slopCategoryTextToSpeech",
+    id: Category.TTSAI,
     videoOnly: true //todo: support video only
 }, {
-    id: "ai-script",
-    key: "slopCategoryAIScript",
-    textKey: "slopCategoryAIText"
+    id: Category.TTSMostlyTTS,
+    videoOnly: true //todo: support video only
 }, {
-    id: "ai-music",
-    key: "slopCategoryAIMusic",
+    id: Category.TTSMostlyHuman,
+    videoOnly: true //todo: support video only
+}, {
+    id: Category.AIScript
+}, {
+    id: Category.AIThumbnail,
     videoOnly: true
 }, {
-    id: "ai-graphics",
-    key: "slopCategoryAIGraphics",
+    id: Category.AIMusic,
     videoOnly: true
 }, {
-    id: "ai-topic",
-    key: "slopCategoryAboutAI",
-    textKey: "slopCategoryFictionParody"
+    id: Category.AIGraphicsMost,
+    videoOnly: true
 }, {
-    id: "clip-mashup",
-    key: "slopCategoryClipMashupReupload",
-    textKey: "slopCategoryRepostOfAnotherWebsite",
-    notAi: true
+    id: Category.AIGraphicsLimited,
+    videoOnly: true
 }, {
-    id: "fiction",
-    key: "slopCategorySkitFictionParody",
-    textKey: "slopCategoryFictionParody",
+    id: Category.AIGraphicsCommentary,
+    videoOnly: true
+}, {
+    id: Category.AITopicExamples,
+}, {
+    id: Category.AITopicNoExamples,
+}, {
+    id: Category.Fiction,
     notAi: true
 }];
 
 const subjectiveVoteTypes: VoteType[] = [{
-    id: "funny",
-    key: "slopCategoryFunny",
+    id: Category.Funny,
     type: 1,
     notAi: true
 }, {
-    id: "entertaining",
-    key: "slopCategoryEntertaining",
+    id: Category.Entertaining,
     type: 1,
     notAi: true
 }, {
-    id: "creative",
-    key: "slopCategoryCreative",
+    id: Category.Creative,
     type: 1,
     notAi: true
 }, {
-    id: "informative",
-    key: "slopCategoryInformative",
+    id: Category.Informative,
     type: 1,
     notAi: true
 }, {
-    id: "boring",
-    key: "slopCategoryBoring",
+    id: Category.Boring,
     type: 2,
     notAi: true
 }, {
-    id: "low-quality",
-    key: "slopCategoryLowQuality",
+    id: Category.LowQuality,
     type: 2,
     notAi: true
 }, {
-    id: "misleading",
-    key: "slopCategoryMisleading",
+    id: Category.Misleading,
+    type: 2,
+    notAi: true
+}, {
+    id: Category.Scam,
     type: 2,
     notAi: true
 }];
@@ -177,7 +176,8 @@ function Checkboxes(props: CheckboxesProps): React.ReactElement {
         result.push(
             <Checkbox
                 key={category.id}
-                langKey={category.key}
+                // todo: handle text-based sites having different keys
+                langKey={"slop_category_" + category.id.replace(/-/g, "_")}
                 subtitle={existingVote ? getVotesText(existingVote.votes) : undefined}
                 onChange={(checked) => {
                     if (checked) {
@@ -289,7 +289,7 @@ function AllHuman(props: AllHumanProps): React.ReactElement {
         <>
             <div className="slAllHuman">
                 <Checkbox
-                    langKey={"slopCategoryAllHuman"}
+                    langKey={"slop_category_human"}
                     checked={props.allHuman}
                     onChange={(checked) => {
                         props.setAllHuman(checked);
