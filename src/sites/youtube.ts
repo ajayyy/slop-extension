@@ -1,4 +1,4 @@
-import { getChannelHandleFromVideo } from "../../maze-utils/src/metadataFetcher";
+import { getUcidFromVideo, setupMetadataOnRecieve } from "../../maze-utils/src/metadataFetcher";
 import { brandingBoxSelector } from "../../maze-utils/src/thumbnail-selectors";
 import { VideoID } from "../../maze-utils/src/video";
 import { executeSelectorPattern } from "../utils/siteInfo";
@@ -46,13 +46,16 @@ export const YouTubeSiteInfo: SiteInfo = {
             get: getProfileID
         }],
         buttonPlacements: []
+    },
+    init: () => {
+        setupMetadataOnRecieve()
     }
 };
 
 async function getProfileID(url: URL, element: HTMLElement): Promise<string | null> {
     const videoID = await executeSelectorPattern(element, contentIdPattern, url) as VideoID | null;
     if (videoID) {
-        return await getChannelHandleFromVideo(videoID) || null;
+        return await getUcidFromVideo(videoID) || null;
     }
 
     return null;
@@ -61,7 +64,7 @@ async function getProfileID(url: URL, element: HTMLElement): Promise<string | nu
 async function getProfileIDByUrl(url: URL): Promise<string | null> {
     const videoID = url.href.match(contentIdRegex)?.[1] as VideoID | null;
     if (videoID) {
-        return await getChannelHandleFromVideo(videoID) || null;
+        return await getUcidFromVideo(videoID) || null;
     }
 
     return null;

@@ -27,77 +27,14 @@ const edgeLanguages = [
 const english = JSON.parse(fs.readFileSync(path.join(__dirname, "../public/_locales/en/messages.json")));
 
 module.exports = env => {
-    const documentScriptBuild = webpack({
-        entry: {
-            document: path.join(__dirname, srcDir + 'injected/document.ts')
-        },
-        output: {
-            path: path.join(__dirname, '../dist/js'),
-        },
-        module: {
-            rules: [
-                {
-                    test: /\.tsx?$/,
-                    loader: 'ts-loader',
-                    exclude: /node_modules/,
-                    resourceQuery: { not: [/raw/] },
-                    options: {
-                        // disable type checker for user in fork plugin
-                        transpileOnly: true,
-                        configFile: env.mode === "production" ? "tsconfig-production.json" : "tsconfig.json"
-                    }
-                },
-            ]
-        },
-        resolve: {
-            extensions: ['.ts', '.tsx', '.js']
-        },
-        plugins: [
-            // Don't fork TS checker for document script to speed up
-            // new ForkTsCheckerWebpackPlugin()
-        ]
-    });
-
-    class DocumentScriptCompiler {
-        currentWatching = null;
-
-        /**
-         * 
-         * @param {webpack.Compiler} compiler 
-         */
-        apply(compiler) {
-            compiler.hooks.beforeCompile.tapAsync({ name: 'DocumentScriptCompiler' }, (compiler, callback) => {
-                if (env.WEBPACK_WATCH) {
-                    let first = true;
-                    if (!this.currentWatching) {
-                        this.currentWatching = documentScriptBuild.watch({}, () => {
-                            if (first) {
-                                first = false;
-                                callback();
-                            }
-                        });
-                    } else {
-                        callback();
-                    }
-                } else {
-                    documentScriptBuild.close(() => {
-                        documentScriptBuild.run(() => {
-                            callback();
-                        });
-                    });
-                }
-            });
-        }
-    }
-
     return {
         entry: {
             background: path.join(__dirname, srcDir + 'background.ts'),
             content: path.join(__dirname, srcDir + 'content.ts'),
-            documentScriptInjector: path.join(__dirname, srcDir + 'documentScriptInjector.ts'),
             options: path.join(__dirname, srcDir + 'options.ts'),
             popup: path.join(__dirname, srcDir + 'popup/popup.tsx'),
             help: path.join(__dirname, srcDir + 'help/help.tsx'),
+            ytDocument: path.join(__dirname, srcDir + 'injected/ytDocument.ts'),
         },
         output: {
             path: path.join(__dirname, '../dist/js'),
@@ -113,10 +50,6 @@ module.exports = env => {
                         transpileOnly: true,
                         configFile: env.mode === "production" ? "tsconfig-production.json" : "tsconfig.json"
                     }
-                },
-                {
-                    test: /js(\/|\\)document\.js$/,
-                    type: 'asset/source'
                 }
             ]
         },
@@ -125,7 +58,6 @@ module.exports = env => {
             symlinks: false
         },
         plugins: [
-            new DocumentScriptCompiler(),
             // fork TS checker
             new ForkTsCheckerWebpackPlugin(),
             // exclude locale files in moment

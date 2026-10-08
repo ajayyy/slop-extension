@@ -95,6 +95,7 @@ export interface SiteInfoBase {
     idPrefix?: string;
     siteChecker?: (url: string) => boolean;
     type: SiteType;
+    init?: () => void;
 }
 
 export interface SocialSiteInfoBase {

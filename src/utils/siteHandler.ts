@@ -25,6 +25,8 @@ let elementMutationObserver: MutationObserver | null = null;
 
 export function initSiteHandler() {
     if (siteInfo) {
+        siteInfo.init?.();
+
         if (siteInfo.browsePageFinder) {
             const elements = Array.from(document.querySelectorAll(siteInfo.browsePageFinder.elementCSSSelector));
             for (const element of elements) {
@@ -86,7 +88,7 @@ function onMutation(mutations: MutationRecord[]) {
 }
 
 async function onPostFound(element: HTMLElement, siteInfo: SiteInfo, selectors: SiteSelectors | SocialSelectors) {
-    const url = new URL(window.location.href);
+    const url = new URL(document.URL);
     const contentID = await getContentID(element, siteInfo, selectors, url);
     const profileID = "profileId" in selectors ? await getProfileID(element, selectors, url) : null;
 

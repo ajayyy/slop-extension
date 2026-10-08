@@ -5,7 +5,6 @@
 // import { SubmitButton } from "./submission/submitButton";
 // import { BrandingLocation, BrandingResult, clearVideoBrandingInstances, replaceCurrentVideoBranding, updateBrandingForAllVideos } from "./videoBranding/videoBranding";
 // import { getVideoBranding, getVideoCasualInfo } from "./dataFetching";
-// import * as documentScript from "../dist/js/document.js";
 // import { listenForBadges, listenForMiniPlayerTitleChange, listenForTitleChange } from "./utils/titleBar";
 // import { replaceVideoPlayerSuggestionsBranding, setupMobileAutoplayHandler } from "./videoBranding/watchPageBrandingHandler";
 // import { onMobile } from "../maze-utils/src/pageInfo";

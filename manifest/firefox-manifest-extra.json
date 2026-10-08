@@ -2,34 +2,13 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "noMoreSlop@ajay.app",
-      "strict_min_version": "102.0"
+      "strict_min_version": "109.0"
     },
     "gecko_android": {
       "strict_min_version": "113.0"
     }
   },
-  "permissions": [
-    "scripting"
-  ],
-  "content_scripts": [{
-    "run_at": "document_start",
-    "matches": [
-        "https://*.youtube.com/*",
-        "https://www.youtube-nocookie.com/embed/*"
-    ],
-    "all_frames": true,
-    "js": [
-        "./js/documentScriptInjector.js"
-    ],
-    "css": [
-        "content.css",
-        "shared.css"
-    ]
-  }],
-  "background": {
-    "persistent": false
-  },
-  "browser_action": {
+  "action": {
     "default_area": "navbar"
   }
 }
